@@ -12,8 +12,9 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { LocalPharmacy } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
-const pages = ['Pharmacie', 'ville', 'user'];
+const pages = ['Pharmacie', 'Ville','Zone', 'User'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
@@ -120,7 +121,10 @@ function ResponsiveAppBar() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
+                <Link style={{textDecoration : "none", color:"white"}} to={`/${page}`}>
                 {page}
+                </Link>
+               
               </Button>
             ))}
           </Box>
