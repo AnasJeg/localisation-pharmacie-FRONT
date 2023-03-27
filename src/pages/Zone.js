@@ -133,9 +133,9 @@ const columns = [
     onFilter: (value, record) => record.ville.indexOf(value) === 0,
 */   filters: allV.map((v) => ({
       text: v.nom,
-      value: v.id,
+      value: v.nom,
     })),
-   onFilter: (value, record) => record.ville && record.ville.id === value,
+    onFilter: (value, record) => record.ville.indexOf(value) === 0,
     
   },
   {
