@@ -29,7 +29,7 @@ export default function Ville() {
     } 
     console.log( JSON.stringify(d) );
     if (!d.nom) {
-      alert("Please enter a ville name");
+      alert("ville vide !");
   } else {
     fetch('http://localhost:8080/api/villes/save',{
       method:'POST',

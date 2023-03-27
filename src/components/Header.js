@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { LocalPharmacy } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
-const pages = ['Pharmacie', 'Ville','Zone', 'User'];
+const pages = ['Pharmacie', 'Ville','Zone','Test', 'User'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
