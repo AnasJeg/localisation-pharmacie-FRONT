@@ -6,6 +6,7 @@ import Register from './pages/Register';
 import Ville from './pages/Ville';
 import Zone from './pages/Zone';
 import Test from './pages/Test';
+import Cour from './pages/Cour';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route extract path='Ville' element={<Ville/>} />
         <Route extract path='/Zone' element={<Zone/>} />
         <Route extract path='/Test' element={<Test/>} />
+        <Route extract path='Cour' element={<Cour/>} />
       </Routes>
     </div>
   );
