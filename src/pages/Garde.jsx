@@ -11,6 +11,7 @@ import axios from "axios";
 import { Table, Space, Popconfirm } from "antd";
 import FormControl from "@mui/material/FormControl";
 import { Select } from "antd";
+import { CenterFocusStrong } from "@mui/icons-material";
 
 const theme = createTheme();
 
@@ -19,6 +20,7 @@ export default function Garde() {
   const [loading, setLoad] = useState(false);
   const [gardes, setGardes] = useState([]);
   const [upTB, forceUpdate] = useReducer((x) => x + 1, 0); // reaload tb
+  const [editingKey, setEditingKey] = useState('');
   // ADD
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -65,7 +67,9 @@ export default function Garde() {
         result.json().then((resp) => {
           console.log(resp);
         });
-      });
+      }).then(()=>{
+        forceUpdate();
+      })
   }
   const column = [
     {
@@ -94,6 +98,9 @@ export default function Garde() {
       key: "action",
     },
   ];
+  const cancel = () => {
+    setEditingKey('');
+  };
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -151,9 +158,15 @@ export default function Garde() {
               Ajouter
             </Button>
           </Box>
+          <Table 
+                bordered  columns={column} dataSource={gardes} loading={loading}
+                 pagination={{
+                    onChange: cancel,
+                  }}
+               />
         </Box>
       </Container>
-      <Table columns={column} dataSource={gardes} loading={loading}/>
+  
     </ThemeProvider>
   );
 }
