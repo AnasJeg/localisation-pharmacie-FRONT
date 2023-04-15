@@ -9,11 +9,11 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import { Table, Space, Popconfirm } from "antd";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { ButtonBase, InputLabel } from "@mui/material";
+import { InputLabel } from "@mui/material";
+import { Table, Space, Popconfirm, Modal, Form, Input } from "antd";
 
 const theme = createTheme();
 
@@ -24,6 +24,14 @@ export default function Zone() {
   const [upTB, forceUpdate] = useReducer((x) => x + 1, 0); // reaload tb
   const [allV, setAllV] = useState([]);
   const [v, setV] = useState("");
+  //modal
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [modalText, setModalText] = useState("Content of the modal");
+  const [form] = Form.useForm();
+  const [modalVille, setMv] = useState("");
+  const [selectedZone, setSelectedZone] = useState(null);
+  //
 
   // SAVE
   const onSubmit = (event) => {
@@ -35,11 +43,10 @@ export default function Zone() {
         id: v,
       },
     };
-    console.log("JSON.stringify(d)  ", JSON.stringify(d));
     if (!d.nom) {
       alert("Zone vide !");
     } else {
-      fetch("http://localhost:8080/api/zones/save", {
+      fetch("/api/zones/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(d),
@@ -53,7 +60,7 @@ export default function Zone() {
   const getVl = async () => {
     setLoad(true);
     try {
-      const res = await axios.get("http://localhost:8080/api/zones/");
+      const res = await axios.get("/api/zones/");
       setVl(
         res.data.map((row) => ({
           id: row.id,
@@ -73,15 +80,12 @@ export default function Zone() {
 
   // Delete
   function deleteUser(id) {
-    axios
-      .delete(`http://localhost:8080/api/zones/delete/${id}`)
-      .then((result) => {
-        console.log("delete ", id);
-        result.json().then((resp) => {
-          console.log(resp);
-          getVl();
-        });
+    axios.delete(`/api/zones/delete/${id}`).then((result) => {
+      console.log("delete ", id);
+      result.json().then((resp) => {
+        getVl();
       });
+    });
     forceUpdate(); // rel
   }
 
@@ -89,17 +93,67 @@ export default function Zone() {
 
   // select villes
   useEffect(() => {
-    axios.get("http://localhost:8080/api/villes/").then((res) => {
+    axios.get("/api/villes/").then((res) => {
       setAllV(res.data);
     });
   }, []);
 
   const handleChange = (event) => {
     setV(event.target.value);
-    console.log("setF ", event.target.value);
+  };
+  //
+  //MODAL
+  const ModalhandleChange = (e) => {
+    setMv(e.target.value);
   };
   //
 
+  const updateZone = () => {
+    axios
+      .put(`/api/zones/update/${selectedZone.id}`, {
+        nom: form.getFieldValue("nom"),
+        ville: {
+          id: modalVille,
+        },
+      })
+      .then((result) => {
+        getVl();
+        form.resetFields();
+        setOpen(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    forceUpdate();
+  };
+
+  const handleCancel = () => {
+    setSelectedZone(null);
+    setOpen(false);
+    form.resetFields();
+  };
+
+  const handleUpdate = (record) => {
+    setSelectedZone(record);
+    setOpen(true);
+  };
+
+  const handleSubmit = () => {
+    setModalText("The modal will be closed after one second");
+    setConfirmLoading(true);
+    updateZone();
+    setTimeout(() => {
+      setConfirmLoading(false);
+      setOpen(false);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    console.log("SelectedZone after update: ", selectedZone);
+  }, [selectedZone]);
+  useEffect(() => {
+    form.setFieldsValue({ nom: selectedZone?.nom });
+  }, [selectedZone, form]);
   const columns = [
     {
       title: "ID",
@@ -115,22 +169,7 @@ export default function Zone() {
       title: "Ville",
       dataIndex: "ville",
       key: "ville",
-      /*    filters: [
-      {
-        text: 'marrakech',
-        value: 'marrakech',
-      },
-      {
-        text: 'casablanca',
-        value: 'casablanca',
-      },
-      {
-        text: 'essaouira',
-        value: 'essaouira',
-      },
-    ],
-    onFilter: (value, record) => record.ville.indexOf(value) === 0,
-*/ filters: allV.map((v) => ({
+      filters: allV.map((v) => ({
         text: v.nom,
         value: v.nom,
       })),
@@ -140,11 +179,14 @@ export default function Zone() {
       title: "Action",
       render: (_, record) => (
         <Space size="middle">
+          <Button variant="outlined" onClick={() => handleUpdate(record)}>
+            Update
+          </Button>
+
           <Popconfirm
             title="Sure to delete?"
             onConfirm={() => deleteUser(record.id)}
           >
-            <Button variant="outlined">Update</Button>
             <Button variant="outlined">Delete</Button>
           </Popconfirm>
         </Space>
@@ -217,6 +259,59 @@ export default function Zone() {
         bordered
         onChange={onChange}
       />
+      <Modal
+        forceRender
+        title="Title"
+        open={open}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={confirmLoading}
+            onClick={form.submit}
+          >
+            Save Changes
+          </Button>,
+        ]}
+      >
+        <Form
+          form={form}
+          onFinish={handleSubmit}
+          initialValues={{ nom: selectedZone?.nom }}
+        >
+          <Form.Item
+            label="Zone"
+            name="nom"
+            rules={[
+              {
+                required: true,
+                message: "Please input your zone!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item label="Ville" name="ville">
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={vl}
+              label="villes"
+              fullWidth
+              onChange={ModalhandleChange}
+            >
+              {allV?.map((item) => (
+                <MenuItem value={item.id}>{item.nom}</MenuItem>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
     </ThemeProvider>
   );
 }

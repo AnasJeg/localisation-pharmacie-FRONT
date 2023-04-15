@@ -31,7 +31,7 @@ export default function Garde() {
       alert("vide !");
       return;
     }
-    await axios.post("http://localhost:8080/api/gardes/save", d).then(() => {
+    await axios.post("/api/gardes/save", d).then(() => {
       forceUpdate();
     });
   };
@@ -42,7 +42,7 @@ export default function Garde() {
   const getAll = async () => {
     setLoad(true);
     try {
-      const res = await axios.get("http://localhost:8080/api/gardes/");
+      const res = await axios.get("/api/gardes/");
       setGardes(
         res.data.map((item) => ({
           id: item.id,
@@ -61,7 +61,7 @@ export default function Garde() {
   //DEL
   function deleteUser(id) {
     axios
-      .delete(`http://localhost:8080/api/gardes/delete/${id}`)
+      .delete(`/api/gardes/delete/${id}`)
       .then((result) => {
         console.log("delete ", id);
         result.json().then((resp) => {
@@ -86,12 +86,11 @@ export default function Garde() {
       title: "Action",
       render: (_, record) => (
         <Space size="middle">
-          <Popconfirm
-            title="Sure to delete?"
-            onConfirm={() => deleteUser(record.id)}
-          >
-            <Button variant="outlined">Update</Button>
-            <Button variant="outlined">Delete</Button>
+       <Popconfirm title="Sure to delete?">
+          <Button variant="outlined">Update</Button>
+          </Popconfirm>
+          <Popconfirm title="Sure to delete?" onConfirm={() =>  deleteUser(record.id)}>
+           <Button variant="outlined">Delete</Button>
           </Popconfirm>
         </Space>
       ),
@@ -158,14 +157,14 @@ export default function Garde() {
               Ajouter
             </Button>
           </Box>
+        </Box>
+      </Container>
           <Table 
                 bordered  columns={column} dataSource={gardes} loading={loading}
                  pagination={{
                     onChange: cancel,
                   }}
                />
-        </Box>
-      </Container>
   
     </ThemeProvider>
   );
