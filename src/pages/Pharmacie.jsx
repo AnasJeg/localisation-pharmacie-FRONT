@@ -11,26 +11,30 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Table, Space, Popconfirm } from "antd";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { Input, InputLabel } from "@mui/material";
+import { Select } from "antd";
+import { InputLabel } from "@mui/material";
 import axios from "axios";
-
+import { Upload } from "antd";
+import ImgCrop from "antd-img-crop";
 const theme = createTheme();
 
 export default function Pharmacie() {
   const [loading, setLoad] = useState(false);
   const [zones, setZones] = useState([]);
   const [z, setZ] = useState("");
+  const [user, setUser] = useState("");
+  const [fileList, setFileList] = useState([]);
+  const [pharmacies , setPharmacies] = useState();
+  const [uptable , forceupdate] = useReducer((x)=>x+1,0)
 
   useEffect(() => {
-    axios.get("/api/zones/")
-      .then((res) => {
-        setZones(res.data)
-      })
-  }, [])
+    axios.get("/api/zones/").then((res) => {
+      setZones(res.data);
+    });
+  }, []);
 
   // SAVE
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     var d = {
@@ -41,16 +45,50 @@ export default function Pharmacie() {
       photos: data.get("photos"),
       zone: {
         id: z,
-      }
+      },
     };
-    console.log(JSON.stringify(d));
     if (!d) {
       alert(" vide !");
     } else {
-      console.log(d)
+      try {
+        console.log(d);
+         await axios.post(`/api/pharmacies/save`, d)
+          .then(()=>{
+            forceupdate()
+          })
+     
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
-
+  //ALL pharmacies
+  const Allpharmacies = async ()=>{
+      setLoad(true)
+      try{
+         await axios.get('/api/pharmacies/')
+          .then((res)=>{
+            console.log(res.data)
+            setPharmacies(
+              res.data.map((item)=>({
+                id: item.id,
+                nom: item.nom,
+                adresse: item.adresse,
+                latitude: item.latitude,
+                longitude: item.longitude,
+                photos: item.photos,
+                zone: item.zone.nom
+              }))
+            )
+          })
+      }catch(err){
+        console.log(err)
+      }
+      setLoad(false)
+  }
+  useEffect(()=>{
+    Allpharmacies()
+  }, [uptable])
   const columns = [
     {
       title: "ID",
@@ -99,7 +137,10 @@ export default function Pharmacie() {
           <Popconfirm title="Sure to delete?">
             <Button variant="outlined">Update</Button>
           </Popconfirm>
-          <Popconfirm title="Sure to delete?" onConfirm={() => console.log('delete')}>
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => console.log("delete")}
+          >
             <Button variant="outlined">Delete</Button>
           </Popconfirm>
         </Space>
@@ -109,8 +150,31 @@ export default function Pharmacie() {
   ];
 
   const handleChange = (event) => {
-    setZ(event.target.value);
-    console.log("setF ", event.target.value);
+    setZ(event);
+    console.log("setZ ", event);
+  };
+
+  const onChange = (value) => {
+    setUser(value);
+  };
+
+  const onChangeImage = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+    console.log(newFileList)
+  };
+  const onPreview = async (file) => {
+    let src = file.url;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
   };
   return (
     <ThemeProvider theme={theme}>
@@ -167,37 +231,49 @@ export default function Pharmacie() {
               id="longitude"
               autoFocus
             />
-            <Input
-              margin="normal"
-              type="file"
-              required
-              fullWidth
-              name="photos"
-              label="photos"
-              id="photos"
-              autoFocus
-            />
-
-            <FormControl fullWidth style={{ marginTop: 14 }}>
-              <InputLabel id="demo-simple-select-label">User</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={zones}
-                label="user"
-
+            <ImgCrop rotationSlider>
+              <Upload
+                name="photos"
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                listType="picture-card"
+                fileList={fileList}
+                onChange={onChangeImage}
+                onPreview={onPreview}
               >
-                {zones?.map((item) => (
-                  <MenuItem value={item.id}>{item.nom}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+                {fileList.length < 50 && "+ Upload"}
+              </Upload>
+            </ImgCrop>
+            <InputLabel id="demo-simple-select-label">User</InputLabel>
+            <Select
+              fullWidth
+              showSearch
+              style={{
+                width: 260,
+              }}
+              placeholder="Select user"
+              optionFilterProp="children"
+              onChange={onChange}
+              filterOption={(input, option) =>
+                (option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={[
+                {
+                  value: "anas",
+                  label: "anas",
+                },
+                {
+                  value: "jeg",
+                  label: "jeg",
+                },
+              ]}
+            />
             <FormControl fullWidth style={{ marginTop: 14 }}>
-              <InputLabel id="demo-simple-select-label">Zones</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={zones}
+                value={z}
                 label="zone"
                 onChange={handleChange}
               >
@@ -218,12 +294,7 @@ export default function Pharmacie() {
         </Box>
       </Container>
 
-      <Table
-        columns={columns}
-        loading={loading}
-        bordered
-        handleChange={handleChange}
-      />
+      <Table columns={columns} dataSource={pharmacies} loading={loading} bordered />
     </ThemeProvider>
   );
 }

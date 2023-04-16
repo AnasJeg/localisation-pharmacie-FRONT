@@ -1,80 +1,67 @@
-import * as React from 'react';
-import { Button, Checkbox, Form, Input } from 'antd';
-
-export default function Test() {
-  const onFinish = (values) => {
-    console.log('Success:', values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
+import { Select, Spin } from 'antd';
+import debounce from 'lodash/debounce';
+import { useMemo, useRef, useState } from 'react';
+function DebounceSelect({ fetchOptions, debounceTimeout = 800, ...props }) {
+  const [fetching, setFetching] = useState(false);
+  const [options, setOptions] = useState([]);
+  const fetchRef = useRef(0);
+  const debounceFetcher = useMemo(() => {
+    const loadOptions = (value) => {
+      fetchRef.current += 1;
+      const fetchId = fetchRef.current;
+      setOptions([]);
+      setFetching(true);
+      fetchOptions(value).then((newOptions) => {
+        if (fetchId !== fetchRef.current) {
+          // for fetch callback order
+          return;
+        }
+        setOptions(newOptions);
+        setFetching(false);
+      });
+    };
+    return debounce(loadOptions, debounceTimeout);
+  }, [fetchOptions, debounceTimeout]);
   return (
-    <Form
-      name="basic"
-      labelCol={{
-        span: 8,
-      }}
-      wrapperCol={{
-        span: 16,
-      }}
-      style={{
-        maxWidth: 600,
-      }}
-      initialValues={{
-        remember: true,
-      }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      <Form.Item
-        label="Username"
-        name="username"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your username!',
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
-  
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your password!',
-          },
-        ]}
-      >
-        <Input.Password />
-      </Form.Item>
-  
-      <Form.Item
-        name="remember"
-        valuePropName="checked"
-        wrapperCol={{
-          offset: 8,
-          span: 16,
-        }}
-      >
-        <Checkbox>Remember me</Checkbox>
-      </Form.Item>
-  
-      <Form.Item
-        wrapperCol={{
-          offset: 8,
-          span: 16,
-        }}
-      >
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
+    <Select
+      labelInValue
+      filterOption={false}
+      onSearch={debounceFetcher}
+      notFoundContent={fetching ? <Spin size="small" /> : null}
+      {...props}
+      options={options}
+    />
   );
 }
 
+// Usage of DebounceSelect
+
+async function fetchUserList(username) {
+  console.log('fetching user', username);
+  return fetch('https://randomuser.me/api/?results=5')
+    .then((response) => response.json())
+    .then((body) =>
+      body.results.map((user) => ({
+        label: `${user.name.first} ${user.name.last}`,
+        value: user.login.username,
+      })),
+    );
+}
+const Test = () => {
+  const [value, setValue] = useState([]);
+  return (
+    <DebounceSelect
+      mode="multiple"
+      value={value}
+      placeholder="Select users"
+      fetchOptions={fetchUserList}
+      onChange={(newValue) => {
+        setValue(newValue);
+      }}
+      style={{
+        width: '100%',
+      }}
+    />
+  );
+};
+export default Test;

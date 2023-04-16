@@ -8,6 +8,7 @@ import Zone from './pages/Zone';
 import Test from './pages/Test';
 import Garde from './pages/Garde';
 import Pharmacie from './pages/Pharmacie';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
         <Route extract path='/Garde' element={<Garde />} />
         <Route extract path='/Test' element={<Test />} />
       </Routes>
-
+    <Footer/>
     </div>
   );
 }

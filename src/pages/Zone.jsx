@@ -27,7 +27,7 @@ export default function Zone() {
   //modal
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [modalText, setModalText] = useState("Content of the modal");
+  const [setModalText] = useState("Content of the modal");
   const [form] = Form.useForm();
   const [modalVille, setMv] = useState("");
   const [selectedZone, setSelectedZone] = useState(null);
@@ -302,8 +302,9 @@ export default function Zone() {
               id="demo-simple-select"
               value={vl}
               label="villes"
-              fullWidth
               onChange={ModalhandleChange}
+              fullWidth
+              style={{ height: 14 }}
             >
               {allV?.map((item) => (
                 <MenuItem value={item.id}>{item.nom}</MenuItem>

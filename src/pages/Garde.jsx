@@ -11,8 +11,6 @@ import axios from "axios";
 import { Table, Space, Popconfirm } from "antd";
 import FormControl from "@mui/material/FormControl";
 import { Select } from "antd";
-import { CenterFocusStrong } from "@mui/icons-material";
-
 const theme = createTheme();
 
 export default function Garde() {
