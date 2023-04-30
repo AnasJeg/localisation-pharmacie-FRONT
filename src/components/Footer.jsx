@@ -11,19 +11,6 @@ export default function Footer() {
             <footer className="container">
              
                     <div className="row">
-                        <div className="col-md-6 item text">
-                            <h3>About Our App</h3>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia sit quis, accusamus quidem ea beatae provident numquam sed maiores ipsam totam officiis perferendis explicabo dolor exercitationem sint harum, dolore quod.</p>
-                        </div>
-
-                        <div className="col-sm-6 col-md-3 item">
-                            <h3>About Us</h3>
-                            <ul>
-                                <li><a href="/#">Company</a></li>
-                                <li><a href="/#">Team</a></li>
-                                <li><a href="/#">Careers</a></li>
-                            </ul>
-                        </div>
                         <div className="col-sm-6 col-md-3 item">
                             <h3>Contact Us</h3>
                             <ul>
