@@ -14,6 +14,8 @@ import { Select } from "antd";
 import axios from "axios";
 import { Upload } from "antd";
 import { Button } from "@mui/material";
+import { UploadOutlined } from '@ant-design/icons';
+import img from "../assets/logo.png"
 
 const theme = createTheme();
 
@@ -32,6 +34,8 @@ export default function Pharmacie() {
   const [modalepharmacie, setPH_modal] = useState("");
   const [modalegarde, setG_modal] = useState("");
   const [selectedGarde_Ph, setSelectedGarde_Ph] = useState(null);
+  const [fileList, setFileList] = useState("");
+  const [fileModale, setFileModale] = useState(img);
   //
   useEffect(() => {
     axios.get("/api/zones/").then((res) => {
@@ -147,7 +151,7 @@ export default function Pharmacie() {
 
           <Popconfirm
             title="Sure to delete?"
-            onConfirm={() => console.log(record)}
+            onConfirm={() => deletePharmacie(record.id)}
           >
             <Button variant="outlined">Delete</Button>
           </Popconfirm>
@@ -161,45 +165,20 @@ export default function Pharmacie() {
     setZ(event);
     console.log("setZ ", event);
   };
-  // image
-  /*
-    const handleChangeImage = async (event) => {
-      const f = event.target.files[0];
-      if (f) {
-        const dataUrl = await readFileAsDataURL(f);
-        console.log(dataUrl)
-        setFile(dataUrl);
-      }
-    };
-    */
-  const handleChangeImage = async (event) => {
-    const f = event.target.files[0];
-    if (f) {
-      const dataUrl = await readFileAsDataURL(f);
-      console.log(dataUrl)
-      // set the value of `photos` to the data URL obtained from reading the file
-      setFile(dataUrl);
-    }
-  };
-
-
-  const readFileAsDataURL = (m) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(m);
-    });
-  };
-
   //update 
   const handleUpdate = (record) => {
     console.log(record)
-
+    setFileList(record.photos)
     setOpen(true);
   };
+  // Delete
+  function deletePharmacie(id) {
+    axios.delete(`/api/pharmacies/delete/${id}`).then((result) => {
+      console.log("delete ", id);
+      Allpharmacies()
+    });
+    forceupdate();
+  }
   // Modal update
   const handleSubmit = () => {
     setConfirmLoading(true);
@@ -215,6 +194,15 @@ export default function Pharmacie() {
   };
   const ModalhandleChangeZones = (e) => {
     console.log(e)
+  };
+  const beforeUpload = (file) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target.result;
+      setFileModale(dataUrl);
+    };
+    reader.readAsDataURL(file);
+    return false;
   };
   return (
     <ThemeProvider theme={theme}>
@@ -273,14 +261,6 @@ export default function Pharmacie() {
             />
 
             {/*    
-         <Upload.Dragger
-            listType="file"
-            id="photos" 
-            onChange={handleChangeImage} 
-          >
-              Drag image here 
-           
-          </Upload.Dragger>
             <input type="file" id="photos" onChange={handleChangeImage} />
            */}
             <Upload.Dragger
@@ -290,6 +270,7 @@ export default function Pharmacie() {
               listType="picture"
               action="http://localhost:3000/Pharmacie"
               accept=".png,.PNG,.JPEG,.jpeg,.jpg"
+
               beforeUpload={(file) => {
                 const reader = new FileReader();
                 reader.onload = (event) => {
@@ -409,6 +390,26 @@ export default function Pharmacie() {
             ]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item>
+            <Upload
+              name="photosModale"
+              maxCount={1}
+              listType="picture"
+              action="http://localhost:3000/Pharmacie"
+              accept=".png,.PNG,.JPEG,.jpeg,.jpg"
+              beforeUpload={beforeUpload}
+              defaultFileList={[
+                {
+                  uid: 'img',
+                  name: 'imh.png',
+                  status: 'done',
+                  url: fileModale,
+                },
+              ]}
+            >
+              <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
+            </Upload>
           </Form.Item>
           <Form.Item label="zonesModal" name="zonesModal">
             <Select
