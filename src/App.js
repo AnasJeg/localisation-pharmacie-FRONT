@@ -11,6 +11,7 @@ import Pharmacie from './pages/Pharmacie';
 import Footer from './components/Footer';
 import GardePharmacie from './pages/GardePharmacie';
 import Localisation from './components/Localisation';
+import Map from './components/Map';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route extract path='/Test' element={<Test />} />
         <Route path='/Garde_Pharmacie' element={<GardePharmacie/>} />
         <Route path='/Localisation/:id' element={<Localisation/>} />
+        <Route path='/Local/:id' element={<Map/>} />
       </Routes>
     <Footer/>
     </div>
