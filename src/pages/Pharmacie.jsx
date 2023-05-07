@@ -36,6 +36,7 @@ export default function Pharmacie() {
   const [selectedGarde_Ph, setSelectedGarde_Ph] = useState(null);
   const [fileList, setFileList] = useState("");
   const [fileModale, setFileModale] = useState(img);
+  const [selectedPharmacie, setSelectedPharmacie] = useState(null);
   //
   useEffect(() => {
     axios.get("/api/zones/").then((res) => {
@@ -168,9 +169,11 @@ export default function Pharmacie() {
   //update 
   const handleUpdate = (record) => {
     console.log(record)
+    setSelectedPharmacie(record)
     setFileList(record.photos)
     setOpen(true);
   };
+
   // Delete
   function deletePharmacie(id) {
     axios.delete(`/api/pharmacies/delete/${id}`).then((result) => {
@@ -180,17 +183,18 @@ export default function Pharmacie() {
     forceupdate();
   }
   // Modal update
+  const handleCancel = () => {
+    setSelectedPharmacie(null)
+    setFileList(null)
+    setOpen(false);
+    form.resetFields();
+  };
   const handleSubmit = () => {
     setConfirmLoading(true);
     setTimeout(() => {
       setConfirmLoading(false);
       setOpen(false);
     }, 1000);
-  };
-  const handleCancel = () => {
-    setSelectedGarde_Ph(null);
-    setOpen(false);
-    form.resetFields();
   };
   const ModalhandleChangeZones = (e) => {
     console.log(e)
@@ -204,6 +208,13 @@ export default function Pharmacie() {
     reader.readAsDataURL(file);
     return false;
   };
+  //
+  useEffect(() => {
+    console.log("SelectedZone after update: ", selectedPharmacie);
+  }, [selectedPharmacie]);
+  useEffect(() => {
+    form.setFieldsValue({ nom: selectedPharmacie?.nom });
+  }, [selectedPharmacie, form]);
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">

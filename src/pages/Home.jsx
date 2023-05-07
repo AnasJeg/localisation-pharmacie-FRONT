@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row } from "antd";
 import axios from "axios";
+import { Link } from "react-router-dom";
 const { Meta } = Card;
 
 export default function Home() {
@@ -21,8 +22,7 @@ export default function Home() {
               width: 240,
               marginTop: 7,
             }}
-            // eslint-disable-next-line jsx-a11y/anchor-is-valid
-            extra={<a href="#">Detail</a>}
+            extra={<Link to={`/Localisation/${item.id}`}>Detail</Link>}
             // eslint-disable-next-line jsx-a11y/img-redundant-alt
             cover={<img alt="photo" src={item.photos} />}
           >

@@ -10,6 +10,7 @@ import Garde from './pages/Garde';
 import Pharmacie from './pages/Pharmacie';
 import Footer from './components/Footer';
 import GardePharmacie from './pages/GardePharmacie';
+import Localisation from './components/Localisation';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route extract path='/Garde' element={<Garde />} />
         <Route extract path='/Test' element={<Test />} />
         <Route path='/Garde_Pharmacie' element={<GardePharmacie/>} />
+        <Route path='/Localisation/:id' element={<Localisation/>} />
       </Routes>
     <Footer/>
     </div>
