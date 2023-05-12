@@ -12,18 +12,34 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Axios from '../service/caller.service';
+import { useNavigate } from 'react-router-dom';
 
 
 const theme = createTheme();
 
 export default function Register() {
-  const handleSubmit = (event) => {
+    const navigate = useNavigate()
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+    let d={
+      prenom: data.get('prenom'),
+      nom: data.get('nom'),
       email: data.get('email'),
       password: data.get('password'),
-    });
+      role : 'USER'
+    }
+    if(!d.prenom || !d.nom || !d.email || !d.password){
+      alert("Champ vide !");
+    }else{
+      console.log(d)
+      await Axios.post("/api/auth/register",d)
+      .then(() => {
+        navigate('/', {replace: true})
+      });
+    }
   };
 
   return (
@@ -49,11 +65,11 @@ export default function Register() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
-                  name="firstName"
+                  name="prenom"
                   required
                   fullWidth
-                  id="firstName"
-                  label="First Name"
+                  id="prenom"
+                  label="Prenom"
                   autoFocus
                 />
               </Grid>
@@ -61,10 +77,10 @@ export default function Register() {
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
+                  id="nom"
+                  label="Nom"
+                  name="nom"
+                  autoComplete="Nom"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -82,16 +98,10 @@ export default function Register() {
                   required
                   fullWidth
                   name="password"
-                  label="Password"
+                  label="password"
                   type="password"
                   id="password"
                   autoComplete="new-password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
                 />
               </Grid>
             </Grid>
@@ -105,7 +115,7 @@ export default function Register() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="/" variant="body2">
+                <Link href="/Login" variant="body2">
                 Vous avez déjà un compte ? Connectez-vous.
                 </Link>
               </Grid>

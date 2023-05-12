@@ -40,7 +40,7 @@ function ResponsiveAppBar() {
 
   const logout = () => {
     accountService.logout()
-      navigate('/')
+      navigate('/auth/Login')
   }
   return (
     <AppBar position="static">
@@ -97,7 +97,7 @@ function ResponsiveAppBar() {
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center"><Link
-                  to={`/${page}`}
+                  to={`${page}`}
                 />
                   {page}
                </Typography>
@@ -133,7 +133,7 @@ function ResponsiveAppBar() {
               >
                 <Link
                   style={{ textDecoration: "none", color: "white" }}
-                  to={`/${page}`}
+                  to={`${page}`}
                 >
                   {page}
                 </Link>

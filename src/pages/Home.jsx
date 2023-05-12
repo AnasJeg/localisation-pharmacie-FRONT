@@ -132,7 +132,7 @@ export default function Home() {
             Icon={item.photos}
             title={item.nom}
             subtitle={item.zone.ville.nom}
-            btn={<Link style={{ textDecoration: 'none', color: 'blue' }} to={`/Local/${item.id}`}>Detail</Link>}
+            btn={<Link style={{ textDecoration: 'none', color: 'blue' }} to={`/app/Local/${item.id}`}>Detail</Link>}
           />
         ))}
       </Cards>

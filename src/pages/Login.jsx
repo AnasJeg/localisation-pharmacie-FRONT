@@ -19,21 +19,18 @@ const theme = createTheme();
 
 export default function Login({isAuth, setAuth}) {
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+ const navigate = useNavigate();
 
 
   const onSubmit = (e) => {
     e.preventDefault()
     const data = new FormData(e.currentTarget);
-    setEmail(data.get("email"))
-    setPassword(data.get("password"))
+
     try{
-      accountService.login(email,password)
+      accountService.login(data.get("email"),data.get("password"))
       .then(res => {
           accountService.saveToken(res.data.access_token)
-          navigate('/home', {replace: true})
+          navigate('/app', {replace: true})
       })
     }catch(error){
     console.log(error)
