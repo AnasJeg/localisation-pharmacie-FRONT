@@ -12,16 +12,17 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { LocalPharmacy } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import { accountService } from "../service/account.service";
 
-const pages = ["home","Pharmacie", "Ville", "Zone", "Garde", "Garde_Pharmacie", "Test", "User"];
+const pages = ["home","Pharmacie", "Ville", "Zone", "Garde", "Garde_Pharmacie","User"];
 const settings = ["Profile","Logout"];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  let navigate = useNavigate()
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -37,6 +38,10 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const logout = () => {
+    accountService.logout()
+      navigate('/')
+  }
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -91,7 +96,11 @@ function ResponsiveAppBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center"><Link
+                  to={`/${page}`}
+                />
+                  {page}
+               </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -154,9 +163,10 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
+              
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                  <Typography textAlign="center" onClick={logout} >{setting}</Typography>
                 </MenuItem>
               ))}
             </Menu>

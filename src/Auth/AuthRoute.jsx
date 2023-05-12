@@ -9,7 +9,7 @@ const AuthRoute = () => {
         <Routes>
             <Route index element={<Login/>}/>
             <Route path="/" element={<Login/>}/>
-            <Route path='/logout' element={<Logout/>} />
+            <Route path='/Logout' element={<Logout/>} />
         </Routes>
     );
 };
