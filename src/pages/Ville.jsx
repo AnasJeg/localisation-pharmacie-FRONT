@@ -10,6 +10,7 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "../service/caller.service.jsx"
 import { Table, Space, Popconfirm, Modal, Form, Input } from "antd";
+import { ClearAll } from "@mui/icons-material";
 //import axios from "../service/caller.service"
 const theme = createTheme();
 
@@ -18,6 +19,7 @@ export default function Ville() {
   const [loading, setLoad] = useState(false);
   const [vl, setVl] = useState();
   const [upTB, forceUpdate] = useReducer((x) => x + 1, 0); // reaload tb
+  const [nomValue, setNomValue] = useState('');
 
   // SAVE
   const onSubmit = async (event) => {
@@ -32,6 +34,7 @@ export default function Ville() {
     } else {
       await axios.post("/api/controller/villes/save", d).then(() => {
         forceUpdate();
+        setNomValue('')
       });
     }
   };
@@ -59,12 +62,9 @@ export default function Ville() {
 
   // Delete
   function deleteUser(id) {
-    axios.delete(`/api/controller/villes/delete/${id}`).then((result) => {
+    axios.delete(`/api/controller/villes/delete/${id}`).then(() => {
       console.log("delete ", id);
-      result.json().then((resp) => {
-        console.log(resp);
         getVl();
-      });
     });
     forceUpdate(); // rel
   }
@@ -183,6 +183,9 @@ export default function Ville() {
               label="nom"
               id="nom"
               autoFocus
+              value={nomValue}
+              onChange={(event) => setNomValue(event.target.value)}
+    
             />
 
             <Button

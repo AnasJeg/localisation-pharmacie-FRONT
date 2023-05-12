@@ -6,10 +6,11 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
+import { Card, CardContent, FormControl } from '@mui/material';
 import { Table, Space, Popconfirm, Modal, Form, Input } from "antd";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
+import Grid from '@mui/material/Grid';
 import { Select } from "antd";
 import axios from "../service/caller.service.jsx"
 import { Upload } from "antd";
@@ -216,112 +217,127 @@ export default function Pharmacie() {
     form.setFieldsValue({ nom: selectedPharmacie?.nom });
   }, [selectedPharmacie, form]);
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 3,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <PublicIcon sx={{ m: 3 }}>
-            <LockOutlinedIcon />
-          </PublicIcon>
-          <Typography component="h1" variant="h5">
-            Ajouter Pharmacie
-          </Typography>
-          <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="nom"
-              label="nom"
-              id="nom"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="adresse"
-              label="adresse"
-              id="adresse"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="latitude"
-              label="latitude"
-              id="latitude"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="longitude"
-              label="longitude"
-              id="longitude"
-              autoFocus
-            />
-
-            {/*    
-            <input type="file" id="photos" onChange={handleChangeImage} />
-           */}
-            <Upload.Dragger
-              name="photos"
-              id="photos"
-              maxCount={1}
-              listType="picture"
-              action="http://localhost:3000/Pharmacie"
-              accept=".png,.PNG,.JPEG,.jpeg,.jpg"
-
-              beforeUpload={(file) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                  const dataUrl = event.target.result;
-                  console.log(dataUrl);
-                  setFile(dataUrl);
-                };
-                reader.readAsDataURL(file);
-                return false;
+    <Container component="main" maxWidth="lg">
+      <Card sx={{ marginTop: 3 }} >
+        <CardContent>
+          <form onSubmit={onSubmit}>
+            <Box
+              sx={{
+                marginTop: 3,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
               }}
             >
-              <p className="ant-upload-text">Drag image here</p>
-            </Upload.Dragger>
+              <PublicIcon sx={{ m: 3 }}>
+                <LockOutlinedIcon />
+              </PublicIcon>
+              <Typography component="h1" variant="h5">
+                Ajouter Pharmacie
+              </Typography>
+              <Box sx={{ mt: 3 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      name="nom"
+                      label="nom"
+                      id="nom"
+                      autoFocus
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      name="adresse"
+                      label="adresse"
+                      id="adresse"
+                      autoFocus
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      name="latitude"
+                      label="latitude"
+                      id="latitude"
+                      autoFocus
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      name="longitude"
+                      label="longitude"
+                      id="longitude"
+                      autoFocus
+                    />
+                  </Grid>
 
+                  {/*    
+            <input type="file" id="photos" onChange={handleChangeImage} />
+           */}
+                  <Grid item xs={12} sm={4}>
+                    <Upload.Dragger
+                      name="photos"
+                      id="photos"
+                      maxCount={1}
+                      listType="picture"
+                      action="http://localhost:3000/Pharmacie"
+                      accept=".png,.PNG,.JPEG,.jpeg,.jpg"
 
-            <FormControl fullWidth style={{ marginTop: 14 }}>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={z}
-                label="zone"
-                onChange={handleChange}
-              >
-                {zones?.map((item) => (
-                  <MenuItem value={item.id}>{item.nom}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Ajouter
-            </Button>
-          </Box>
-        </Box>
-      </Container>
+                      beforeUpload={(file) => {
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                          const dataUrl = event.target.result;
+                          console.log(dataUrl);
+                          setFile(dataUrl);
+                        };
+                        reader.readAsDataURL(file);
+                        return false;
+                      }}
+                    >
+                      <p className="ant-upload-text">Drag image here</p>
+                    </Upload.Dragger>
 
+                  </Grid>
+
+                  <FormControl fullWidth style={{ marginTop: 10 }}>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={z}
+                      label="zone"
+                      onChange={handleChange}
+                    >
+                      {zones?.map((item) => (
+                        <MenuItem value={item.id}>{item.nom}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                </Grid>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Ajouter
+                </Button>
+              </Box>
+            </Box>
+          </form>
+        </CardContent>
+      </Card>
       <Table
         columns={columns}
         dataSource={pharmacies}
@@ -439,6 +455,7 @@ export default function Pharmacie() {
           </Form.Item>
         </Form>
       </Modal>
-    </ThemeProvider>
+    </Container>
+
   );
 }

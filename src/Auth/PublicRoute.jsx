@@ -8,11 +8,11 @@ import Map from '../components/Map';
 const PublicRoute = () => {
     return (
         <Routes>
-          <Route element={<Home />}>
-            <Route path="/home" element={<Home />} />
-            <Route path='/Local/:id' element={<Map />} />
-            <Route path="/" element={<Login />} />
-            <Route path='/logout' element={<Logout/>} />
+          <Route index element={<Home />}>
+            <Route path="home" element={<Home />} />
+            <Route path='Local/:id' element={<Map />} />
+            <Route path="Login" element={<Login />} />
+            <Route path='logout' element={<Logout/>} />
           </Route>
 
         </Routes>

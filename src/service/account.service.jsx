@@ -12,7 +12,6 @@ let login = (emailL,passwordL) => {
 
 let saveToken = (token) => {
     localStorage.setItem('token', token)
-    console.log('token', token)
 }
 
 

@@ -40,7 +40,7 @@ function ResponsiveAppBar() {
 
   const logout = () => {
     accountService.logout()
-      navigate('/auth/Login')
+      navigate('/Login')
   }
   return (
     <AppBar position="static">
