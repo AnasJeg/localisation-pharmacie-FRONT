@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+
 import { Link } from "react-router-dom";
 import Card from "../components/MyCard.jsx";
 import styled from "styled-components";
 import { Slide } from "react-awesome-reveal";
 import { Select } from "antd";
-
+import axios from "../service/caller.service.jsx"
+import { accountService } from "../service/account.service.jsx";
 
 export default function Home() {
   const [pharmacies, setPharmacies] = useState();
@@ -15,13 +16,17 @@ export default function Home() {
   const [zn ,setZn]=useState()
   const [gr ,setGr]=useState()
   useEffect(() => {
-    axios.get("/api/pharmacies/").then((res) => {
+    axios.get('/api/controller/pharmacies/', {
+      headers: { Authorization: 'Bearer ' + accountService.getToken() }
+    }).then((res) => {
       setPharmacies(res.data);
     });
   }, []);
 //villes
   useEffect(() => {
-    axios.get("/api/villes/")
+    axios.get("/api/controller/villes/",{
+      headers: { Authorization: 'Bearer ' + accountService.getToken() }
+    })
       .then((res) => {
         console.log(res.data)
         setVilles(res.data)
@@ -38,7 +43,9 @@ export default function Home() {
   };
   //zones
   function findZonesByVille(nom){
-    axios.get(`/api/zones/ville/${nom}`)
+    axios.get(`/api/controller/zones/ville/${nom}`,{
+      headers: { Authorization: 'Bearer ' + accountService.getToken() }
+    })
     .then((res) => {
       setZones(res.data)
     })
@@ -63,7 +70,7 @@ export default function Home() {
   //pharmacie 
   useEffect(() => {
     if(vl && zn ){
-      axios.get(`/api/pharmacies/ville/${vl}/zone/${zn}`).then((res) => {
+      axios.get(`/api/controller/pharmacies/ville/${vl}/zone/${zn}`).then((res) => {
     //  axios.get(`/api/pharmacies/ville/${vl}/zone/${zn}/pharmacies/${gr}`).then((res) => {  
         console.log("res.data",res.data)
         setPharmacies(res.data);
@@ -134,10 +141,9 @@ export default function Home() {
 }
 const Container = styled.div`
   width: 80%;
-  max-width: 1280px;
   margin: 0 auto;
   padding: 3rem 0;
-  @media (max-width: 840px) {
+  @media (max-width: 80%) {
     width: 90%;
   }
 

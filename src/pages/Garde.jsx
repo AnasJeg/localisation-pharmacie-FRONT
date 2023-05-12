@@ -7,7 +7,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
+import axios from "../service/caller.service.jsx"
 import { Table, Space, Popconfirm } from "antd";
 import FormControl from "@mui/material/FormControl";
 import { Select } from "antd";
@@ -29,7 +29,7 @@ export default function Garde() {
       alert("vide !");
       return;
     }
-    await axios.post("/api/gardes/save", d).then(() => {
+    await axios.post("/api/controller/gardes/save", d).then(() => {
       forceUpdate();
     });
   };
@@ -40,7 +40,7 @@ export default function Garde() {
   const getAll = async () => {
     setLoad(true);
     try {
-      const res = await axios.get("/api/gardes/");
+      const res = await axios.get("/api/controller/gardes/");
       setGardes(
         res.data.map((item) => ({
           id: item.id,
@@ -59,7 +59,7 @@ export default function Garde() {
   //DEL
   function deleteUser(id) {
     axios
-      .delete(`/api/gardes/delete/${id}`)
+      .delete(`/api/controller/gardes/delete/${id}`)
       .then((result) => {
         console.log("delete ", id);
         result.json().then((resp) => {

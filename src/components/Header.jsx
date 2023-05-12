@@ -13,9 +13,10 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { LocalPharmacy } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 
-const pages = ["Pharmacie", "Ville", "Zone", "Garde", "Garde_Pharmacie", "Test", "User"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = ["home","Pharmacie", "Ville", "Zone", "Garde", "Garde_Pharmacie", "Test", "User"];
+const settings = ["Profile","Logout"];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -134,7 +135,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/logo.png" />
+                <Avatar alt="Remy Sharp" src={logo} />
               </IconButton>
             </Tooltip>
             <Menu

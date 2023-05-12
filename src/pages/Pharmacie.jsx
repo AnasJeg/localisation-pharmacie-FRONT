@@ -11,7 +11,7 @@ import { Table, Space, Popconfirm, Modal, Form, Input } from "antd";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { Select } from "antd";
-import axios from "axios";
+import axios from "../service/caller.service.jsx"
 import { Upload } from "antd";
 import { Button } from "@mui/material";
 import { UploadOutlined } from '@ant-design/icons';
@@ -39,7 +39,7 @@ export default function Pharmacie() {
   const [selectedPharmacie, setSelectedPharmacie] = useState(null);
   //
   useEffect(() => {
-    axios.get("/api/zones/").then((res) => {
+    axios.get("/api/controller/zones/").then((res) => {
       setZones(res.data);
     });
   }, []);
@@ -64,7 +64,7 @@ export default function Pharmacie() {
     } else {
       try {
         console.log(d);
-        await axios.post(`/api/pharmacies/save`, d).then(() => {
+        await axios.post(`/api/controller/pharmacies/save`, d).then(() => {
           forceupdate();
         });
       } catch (error) {
@@ -76,7 +76,7 @@ export default function Pharmacie() {
   const Allpharmacies = async () => {
     setLoad(true);
     try {
-      await axios.get("/api/pharmacies/").then((res) => {
+      await axios.get("/api/controller/pharmacies/").then((res) => {
         console.log(res.data);
         setPharmacies(
           res.data.map((item) => ({
@@ -176,7 +176,7 @@ export default function Pharmacie() {
 
   // Delete
   function deletePharmacie(id) {
-    axios.delete(`/api/pharmacies/delete/${id}`).then((result) => {
+    axios.delete(`/api/controller/pharmacies/delete/${id}`).then((result) => {
       console.log("delete ", id);
       Allpharmacies()
     });

@@ -8,9 +8,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
+import axios from "../service/caller.service.jsx"
 import { Table, Space, Popconfirm, Modal, Form, Input } from "antd";
-
+//import axios from "../service/caller.service"
 const theme = createTheme();
 
 export default function Ville() {
@@ -20,7 +20,7 @@ export default function Ville() {
   const [upTB, forceUpdate] = useReducer((x) => x + 1, 0); // reaload tb
 
   // SAVE
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     var d = {
@@ -30,12 +30,8 @@ export default function Ville() {
     if (!d.nom) {
       alert("ville vide !");
     } else {
-      fetch("/api/villes/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(d),
-      }).then(() => {
-        forceUpdate(); // rel
+      await axios.post("/api/controller/villes/save", d).then(() => {
+        forceUpdate();
       });
     }
   };
@@ -44,7 +40,7 @@ export default function Ville() {
   const getVl = async () => {
     setLoad(true);
     try {
-      const res = await axios.get("/api/villes/");
+      const res = await axios.get("/api/controller/villes/");
       setVl(
         res.data.map((row) => ({
           id: row.id,
@@ -63,7 +59,7 @@ export default function Ville() {
 
   // Delete
   function deleteUser(id) {
-    axios.delete(`/api/villes/delete/${id}`).then((result) => {
+    axios.delete(`/api/controller/villes/delete/${id}`).then((result) => {
       console.log("delete ", id);
       result.json().then((resp) => {
         console.log(resp);
@@ -85,7 +81,7 @@ export default function Ville() {
 
   const updateVille = () => {
     axios
-      .put(`/api/villes/update/${selectedVille.id}`, {
+      .put(`/api/controller/villes/update/${selectedVille.id}`, {
         nom: form.getFieldValue("nom"),
       })
       .then((result) => {

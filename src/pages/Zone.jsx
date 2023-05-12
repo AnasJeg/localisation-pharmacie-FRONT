@@ -8,7 +8,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
+import axios from "../service/caller.service.jsx"
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
@@ -34,7 +34,7 @@ export default function Zone() {
   //
 
   // SAVE
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     var d = {
@@ -46,13 +46,10 @@ export default function Zone() {
     if (!d.nom) {
       alert("Zone vide !");
     } else {
-      fetch("/api/zones/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(d),
-      }).then(() => {
-        forceUpdate(); // rel
+      await axios.post("/api/controller/zones/save", d).then(() => {
+        forceUpdate();
       });
+
     }
   };
 
@@ -60,7 +57,7 @@ export default function Zone() {
   const getVl = async () => {
     setLoad(true);
     try {
-      const res = await axios.get("/api/zones/");
+      const res = await axios.get("/api/controller/zones/");
       setVl(
         res.data.map((row) => ({
           id: row.id,
@@ -80,7 +77,7 @@ export default function Zone() {
 
   // Delete
   function deleteUser(id) {
-    axios.delete(`/api/zones/delete/${id}`).then((result) => {
+    axios.delete(`/api/controller/zones/delete/${id}`).then((result) => {
       console.log("delete ", id);
       result.json().then((resp) => {
         getVl();
@@ -93,7 +90,7 @@ export default function Zone() {
 
   // select villes
   useEffect(() => {
-    axios.get("/api/villes/").then((res) => {
+    axios.get("/api/controller/villes/").then((res) => {
       setAllV(res.data);
     });
   }, []);
@@ -110,7 +107,7 @@ export default function Zone() {
 
   const updateZone = () => {
     axios
-      .put(`/api/zones/update/${selectedZone.id}`, {
+      .put(`/api/controller/zones/update/${selectedZone.id}`, {
         nom: form.getFieldValue("nom"),
         ville: {
           id: modalVille,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import axios from "../service/caller.service.jsx"
 import styled from "styled-components";
 import { Slide } from "react-awesome-reveal";
 
@@ -10,7 +10,7 @@ const Map = () => {
     const { id } = useParams();
     const [pharmacie, setpharmacie] = useState();
     useEffect(() => {
-        axios.get(`/api/pharmacies/${id}`).then((res) => {
+        axios.get(`/api/controller/pharmacies/${id}`).then((res) => {
             setLatitude(res.data.latitude);
             setLongitude(res.data.longitude);
             setpharmacie(res.data);

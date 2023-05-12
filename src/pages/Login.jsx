@@ -1,10 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,22 +10,37 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import { accountService } from '../service/account.service';
 
 
 
 const theme = createTheme();
 
-export default function Login() {
-  
+export default function Login({isAuth, setAuth}) {
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    const data = new FormData(e.currentTarget);
+    setEmail(data.get("email"))
+    setPassword(data.get("password"))
+    try{
+      accountService.login(email,password)
+      .then(res => {
+          accountService.saveToken(res.data.access_token)
+          navigate('/home', {replace: true})
+      })
+    }catch(error){
+    console.log(error)
+    } 
+}
+
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -47,7 +60,7 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Login
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -68,10 +81,7 @@ export default function Login() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+
             <Button
               type="submit"
               fullWidth
@@ -83,7 +93,7 @@ export default function Login() {
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                    Mot de passe oublié ?
+                  Mot de passe oublié ?
                 </Link>
               </Grid>
               <Grid item>

@@ -9,7 +9,7 @@ function Localisation(){
     const { id } = useParams();
     const [pharmacie, setpharmacie] = useState();
     useEffect(() => {
-        axios.get(`/api/pharmacies/${id}`).then((res) => {
+        axios.get(`/api/controller/pharmacies/${id}`).then((res) => {
           setLatitude(res.data.latitude);
           setLongitude(res.data.longitude);
           setpharmacie(res.data);

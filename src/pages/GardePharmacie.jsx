@@ -10,7 +10,7 @@ import { Table, Space, Popconfirm, DatePicker } from "antd";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { Select } from "antd";
-import axios from "axios";
+import axios from "../service/caller.service.jsx"
 import { Button } from "@mui/material";
 import dayjs from "dayjs";
 import { Modal, Form } from "antd";
@@ -38,13 +38,13 @@ export default function GardePharmacie() {
   //
   //ALL pharmacies
   useEffect(() => {
-    axios.get("/api/pharmacies/").then((res) => {
+    axios.get("/api/controller/pharmacies/").then((res) => {
       setPharmacies(res.data);
     });
   }, []);
   //All garde
   useEffect(() => {
-    axios.get("/api/gardes/").then((res) => {
+    axios.get("/api/controller/gardes/").then((res) => {
       setGardes(res.data);
     });
   }, []);
@@ -65,7 +65,7 @@ export default function GardePharmacie() {
     } else {
       try {
         console.log(d);
-        await axios.post(`/api/GardePharmacie/save`, d).then(() => {
+        await axios.post(`/api/controller/GardePharmacie/save`, d).then(() => {
           forceupdate();
         });
       } catch (error) {
@@ -77,7 +77,7 @@ export default function GardePharmacie() {
   const AllGardePharmacie = async () => {
     setLoad(true);
     try {
-      await axios.get("/api/GardePharmacie/").then((res) => {
+      await axios.get("/api/controller/GardePharmacie/").then((res) => {
         console.log(res.data);
         setGardePharmacies(
           res.data.map((item) => ({
@@ -141,7 +141,7 @@ export default function GardePharmacie() {
     setSelectedGarde_Ph(record);
     console.log(selectedGarde_Ph.pharmacie)
     console.log(selectedGarde_Ph.garde)
-    axios.delete(`/api/GardePharmacie/deleteGP/${selectedGarde_Ph.dateDebut}/${selectedGarde_Ph.pharmacie}/${selectedGarde_Ph.garde}`)
+    axios.delete(`/api/controller/GardePharmacie/deleteGP/${selectedGarde_Ph.dateDebut}/${selectedGarde_Ph.pharmacie}/${selectedGarde_Ph.garde}`)
       .then((result) => {
         console.log("deleteGP ", selectedGarde_Ph);
         AllGardePharmacie();
@@ -193,7 +193,7 @@ export default function GardePharmacie() {
     console.log(selectedGarde_Ph.pharmacie)
     console.log(selectedGarde_Ph.garde)
     axios
-      .put(`/api/GardePharmacie/update/${selectedGarde_Ph.dateDebut}/${selectedGarde_Ph.pharmacie}/${selectedGarde_Ph.garde}`, {
+      .put(`/api/controller/GardePharmacie/update/${selectedGarde_Ph.dateDebut}/${selectedGarde_Ph.pharmacie}/${selectedGarde_Ph.garde}`, {
         pg: {
           pharmacie: modalepharmacie,
           garde: modalegarde,

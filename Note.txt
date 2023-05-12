@@ -1,4 +1,22 @@
-import FacebookIcon from '@mui/icons-material/Facebook';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
+/*
+  async function login(event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    setEmail(data.get("email"))
+    setPassword(data.get("password"))
+  try {
+    const result = await authService.login(email, password);
+    if (result.success) {
+      console.log(result.data)
+      accountService.saveToken(result.data.access_token)
+      navigate('/home');
+    } else {
+      console.log("err ",result.message);
+    }
+  } catch (error) {
+    console.error(error);
+    // display error message to user
+  }
+
+  };
+ */
