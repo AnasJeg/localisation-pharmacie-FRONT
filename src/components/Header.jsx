@@ -11,7 +11,8 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { LocalPharmacy } from "@mui/icons-material";
+import ListItemIcon from '@mui/material/ListItemIcon';
+import { LocalPharmacy, Logout } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { accountService } from "../service/account.service";
@@ -264,24 +265,48 @@ function ResponsiveAppBar() {
               </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
               anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
+              id="account-menu"
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
+              onClick={handleCloseUserMenu}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-              <MenuItem key='pro' onClick={handleCloseUserMenu}>
-                <Typography textAlign="center" onClick={profile}>Profile</Typography>
-                <Typography  textAlign="center"onClick={logout} >Logout</Typography>
+              <MenuItem onClick={profile}>
+                <Avatar /> Profile
+              </MenuItem>
+              <MenuItem onClick={logout}>
+                <ListItemIcon>
+                  <Logout fontSize="small" />
+                </ListItemIcon>
+                Logout
               </MenuItem>
             </Menu>
           </Box>
