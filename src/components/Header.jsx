@@ -16,8 +16,8 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { accountService } from "../service/account.service";
 
-const pages = ["home","Pharmacie", "Ville", "Zone", "Garde", "Garde_Pharmacie","User"];
-const settings = ["Profile","Logout"];
+const pages = ["home", "Pharmacie", "Ville", "Zone", "Garde", "Garde_Pharmacie", "User", "Test"];
+// const settings = ["Profile","Logout"];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -40,8 +40,16 @@ function ResponsiveAppBar() {
 
   const logout = () => {
     accountService.logout()
-      navigate('/Login')
+    navigate('/Login')
   }
+  const profile = () => {
+    console.log("profile")
+  }
+  /*
+     {accountService.isLogged && accountService.getToken.role === 'ADMIN' && (
+                 <Route path="Ville" element={<Ville />} />
+            )}
+  */
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -96,11 +104,9 @@ function ResponsiveAppBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center"><Link
-                  to={`${page}`}
-                />
-                  {page}
-               </Typography>
+                  <Typography textAlign="center"><Link to={`${page}`} />
+                    {page}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -125,21 +131,131 @@ function ResponsiveAppBar() {
             AnasJ
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+            <Button
+              key='home'
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              <Link
+                style={{ textDecoration: "none", color: "white" }}
+                to={`home`}
+              >
+                home
+              </Link>
+            </Button>
+          </Box>
+          {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+            <Box>
               <Button
-                key={page}
+                key='Pharmacie'
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 <Link
                   style={{ textDecoration: "none", color: "white" }}
-                  to={`${page}`}
+                  to={`Pharmacie`}
                 >
-                  {page}
+                  Pharmacie
                 </Link>
               </Button>
-            ))}
-          </Box>
+            </Box>
+          )}
+          {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+            <Box   >
+              <Button
+                key='Ville'
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <Link
+                  style={{ textDecoration: "none", color: "white" }}
+                  to={`Ville`}
+                >
+                  Ville
+                </Link>
+              </Button>
+            </Box>
+          )}
+          {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+            <Box   >
+              <Button
+                key='Zone'
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <Link
+                  style={{ textDecoration: "none", color: "white" }}
+                  to={`Zone`}
+                >
+                  Zone
+                </Link>
+              </Button>
+            </Box>
+          )}
+          {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+            <Box   >
+              <Button
+                key='Garde'
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <Link
+                  style={{ textDecoration: "none", color: "white" }}
+                  to={`Garde`}
+                >
+                  Garde
+                </Link>
+              </Button>
+            </Box>
+          )}
+          {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+            <Box   >
+              <Button
+                key='Garde_Pharmacie'
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <Link
+                  style={{ textDecoration: "none", color: "white" }}
+                  to={`Garde_Pharmacie`}
+                >
+                  Garde_Pharmacie
+                </Link>
+              </Button>
+            </Box>
+          )}
+          {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+            <Box   >
+              <Button
+                key='User'
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <Link
+                  style={{ textDecoration: "none", color: "white" }}
+                  to={`User`}
+                >
+                  User
+                </Link>
+              </Button>
+            </Box>
+          )}
+          {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+              <Button
+                key='Test'
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <Link
+                  style={{ textDecoration: "none", color: "white" }}
+                  to={`Test`}
+                >
+                  Test
+                </Link>
+              </Button>
+            </Box>
+          )}
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
@@ -163,12 +279,10 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center" onClick={logout} >{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem key='pro' onClick={handleCloseUserMenu}>
+                <Typography textAlign="center" onClick={profile}>Profile</Typography>
+                <Typography  textAlign="center"onClick={logout} >Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>

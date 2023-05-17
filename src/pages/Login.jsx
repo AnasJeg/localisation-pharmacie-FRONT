@@ -30,6 +30,8 @@ export default function Login({isAuth, setAuth}) {
       accountService.login(data.get("email"),data.get("password"))
       .then(res => {
           accountService.saveToken(res.data.access_token)
+          accountService.saveRole(res.data.role)
+        console.log(accountService.getRole())
           navigate('/app', {replace: true})
       })
     }catch(error){

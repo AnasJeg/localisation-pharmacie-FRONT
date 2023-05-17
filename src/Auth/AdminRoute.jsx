@@ -10,26 +10,42 @@ import Localisation from '../components/Localisation';
 import Map from '../components/Map';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Test from '../pages/Test';
+import '../style/admin.css'
+import "primereact/resources/themes/lara-light-indigo/theme.css";     
+import "primereact/resources/primereact.min.css";
+import 'primeicons/primeicons.css';
+import { accountService } from '../service/account.service';
 
 const AdminRoute = () => {
     return (
-        <>
+        <div className='Admin'>
         <Header />
         <Routes>
             <Route>
             <Route index element={<Home/>}/>
                 <Route path="home" element={<Home />} />
+                {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
                 <Route path="Ville" element={<Ville />} />
+                )}
+                 {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
                 <Route path="Pharmacie" element={<Pharmacie />} />
-                <Route extract path='Zone' element={<Zone />} />
-                <Route extract path='Garde' element={<Garde />} />
+                 )}
+                <Route path='Zone' element={<Zone />} />
+                {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+                <Route path='Garde' element={<Garde />} />
+                )}
+                 {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
                 <Route path='Garde_Pharmacie' element={<GardePharmacie />} />
+                 )}
                 <Route path='Localisation/:id' element={<Localisation />} />
                 <Route path='Local/:id' element={<Map />} />
+                <Route path='Test' element={<Test/>} />
+             
             </Route>
         </Routes>
         <Footer/>
-        </>
+        </div>
     );
 };
 

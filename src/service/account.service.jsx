@@ -35,7 +35,14 @@ let getTokenInfo = () => {
     return jwt_decode(getToken())
 }
 
+let saveRole = (role) =>{
+    localStorage.setItem('role', role)
+}
+
+let getRole = () => {
+    return localStorage.getItem('role')
+}
 
 export const accountService = {
-    login, saveToken, logout, isLogged, getToken, getTokenInfo
+    login, saveToken, logout, isLogged, getToken, getTokenInfo ,saveRole,getRole
 }
