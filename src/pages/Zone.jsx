@@ -1,315 +1,228 @@
-import React, { useEffect, useReducer, useState } from "react";
-import PublicIcon from "@mui/icons-material/Public";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "../service/caller.service.jsx"
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { InputLabel } from "@mui/material";
-import { Table, Space, Popconfirm, Modal, Form, Input } from "antd";
+import React, { useState, useEffect, useRef } from 'react';
+import { classNames } from 'primereact/utils';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Toast } from 'primereact/toast';
+import { Button } from 'primereact/button';
+import { Toolbar } from 'primereact/toolbar';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { villeServices } from '../service/ville.service';
+import { Dropdown } from 'primereact/dropdown';
+import { zoneServices } from '../service/zone.service';
 
-const theme = createTheme();
 
 export default function Zone() {
-  const [villes, setVilles] = useState([]);
-  const [loading, setLoad] = useState(false);
-  const [vl, setVl] = useState();
-  const [upTB, forceUpdate] = useReducer((x) => x + 1, 0); // reaload tb
-  const [allV, setAllV] = useState([]);
-  const [v, setV] = useState("");
-  //modal
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [setModalText] = useState("Content of the modal");
-  const [form] = Form.useForm();
-  const [modalVille, setMv] = useState("");
-  const [selectedZone, setSelectedZone] = useState(null);
-  //
+    const [zones, setZones] = useState(null);
+    const [productDialog, setProductDialog] = useState(false);
+    const [deleteProductDialog, setDeleteProductDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const toast = useRef(null);
+    const dt = useRef(null);
+    const [villes, setVilles] = useState("");
+    const [selectedVille, setSelectedVille] = useState(null);
+    const [id, setId] = useState('')
 
-  // SAVE
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    var d = {
-      nom: data.get("nom"),
-      ville: {
-        id: v,
-      },
+
+    useEffect(() => {
+        villeServices.getVilles()
+            .then((res) =>
+                setVilles(
+                    res.data.map((item) => ({
+                        id: item.id,
+                        nom: item.nom,
+                    })))
+            );
+    }, []);
+
+    useEffect(() => {
+        console.log("zonevalueuseEffect  ", villes);
+    }, [villes]);
+
+    var showVille = {
+        nom: '',
+        ville: null
     };
-    if (!d.nom) {
-      alert("Zone vide !");
-    } else {
-      await axios.post("/api/controller/zones/save", d).then(() => {
-        forceUpdate();
-      });
+    const [product, setProduct] = useState(showVille);
 
-    }
-  };
+    const fetchZones = async () => {
+        zoneServices.getZones()
+            .then((res) =>
+                setZones(
+                    res.data.map((item) => ({
+                        id: item.id,
+                        nom: item.nom,
+                        ville: item.ville.nom
+                    })))
+            );
+    };
 
-  // ALL
-  const getVl = async () => {
-    setLoad(true);
-    try {
-      const res = await axios.get("/api/controller/zones/");
-      setVl(
-        res.data.map((row) => ({
-          id: row.id,
-          nom: row.nom,
-          ville: row.ville.nom,
-        }))
-      );
-      setVilles([...villes, vl]);
-    } catch (error) {
-      console.error(error);
-    }
-    setLoad(false);
-  };
-  useEffect(() => {
-    getVl();
-  }, [upTB]);
+    useEffect(() => {
+        fetchZones();
+    }, [productDialog]);
 
-  // Delete
-  function deleteUser(id) {
-    axios.delete(`/api/controller/zones/delete/${id}`).then((result) => {
-      console.log("delete ", id);
-      result.json().then((resp) => {
-        getVl();
-      });
-    });
-    forceUpdate(); // rel
-  }
 
-  // villes
+    const openNew = () => {
+        setProduct(showVille);
+        setSubmitted(false);
+        setProductDialog(true);
+    };
 
-  // select villes
-  useEffect(() => {
-    axios.get("/api/controller/villes/").then((res) => {
-      setAllV(res.data);
-    });
-  }, []);
+    const hideDialog = () => {
+        setSubmitted(false);
+        setProductDialog(false);
+    };
 
-  const handleChange = (event) => {
-    setV(event.target.value);
-  };
-  //
-  //MODAL
-  const ModalhandleChange = (e) => {
-    setMv(e.target.value);
-  };
-  //
+    const hideDeleteProductDialog = () => {
+        setDeleteProductDialog(false);
+    };
 
-  const updateZone = () => {
-    axios
-      .put(`/api/controller/zones/update/${selectedZone.id}`, {
-        nom: form.getFieldValue("nom"),
-        ville: {
-          id: modalVille,
-        },
-      })
-      .then((result) => {
-        getVl();
-        form.resetFields();
-        setOpen(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    forceUpdate();
-  };
 
-  const handleCancel = () => {
-    setSelectedZone(null);
-    setOpen(false);
-    form.resetFields();
-  };
 
-  const handleUpdate = (record) => {
-    setSelectedZone(record);
-    setOpen(true);
-  };
+    const saveProduct = () => {
+        setSubmitted(true);
+        if (product.nom.trim()) {
+            const newProduct = {
+                ...product,
+                 ville: selectedVille
+            };
+            console.log("save_zone", newProduct);
+            setProductDialog(false);
+            setProduct(newProduct);
+            console.log("product ", product)
+            zoneServices.addZone(newProduct).then(() => {
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'operation done', life: 3000 });
+                fetchZones();
+            })
+        }
+    };
 
-  const handleSubmit = () => {
-    setModalText("The modal will be closed after one second");
-    setConfirmLoading(true);
-    updateZone();
-    setTimeout(() => {
-      setConfirmLoading(false);
-      setOpen(false);
-    }, 1000);
-  };
+    const editProduct = (product) => {
+        const newProduct = {
+            ...product
+        };
+        setProduct(newProduct);
+        console.log(product)
+        setProductDialog(true);
+    };
 
-  useEffect(() => {
-    console.log("SelectedZone after update: ", selectedZone);
-  }, [selectedZone]);
-  useEffect(() => {
-    form.setFieldsValue({ nom: selectedZone?.nom });
-  }, [selectedZone, form]);
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
-      title: "Nom",
-      dataIndex: "nom",
-      key: "nom",
-    },
-    {
-      title: "Ville",
-      dataIndex: "ville",
-      key: "ville",
-      filters: allV.map((v) => ({
-        text: v.nom,
-        value: v.nom,
-      })),
-      onFilter: (value, record) => record.ville.indexOf(value) === 0,
-    },
-    {
-      title: "Action",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button variant="outlined" onClick={() => handleUpdate(record)}>
-            Update
-          </Button>
+    const confirmDeleteProduct = (product) => {
+        setId(product.id);
+        setDeleteProductDialog(true);
+    };
 
-          <Popconfirm
-            title="Sure to delete?"
-            onConfirm={() => deleteUser(record.id)}
-          >
-            <Button variant="outlined">Delete</Button>
-          </Popconfirm>
-        </Space>
-      ),
-      key: "action",
-    },
-  ];
-  const onChange = (filters) => {
-    console.log("params", filters.value);
-  };
-  return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <PublicIcon sx={{ m: 3 }}>
-            <LockOutlinedIcon />
-          </PublicIcon>
-          <Typography component="h1" variant="h5">
-            Ajouter zone
-          </Typography>
-          <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="nom"
-              label="nom"
-              id="nom"
-              autoFocus
-            />
-            <FormControl fullWidth style={{ marginTop: 17 }}>
-              <InputLabel id="demo-simple-select-label">Villes</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={vl}
-                label="villes"
-                onChange={handleChange}
-              >
-                {allV?.map((item) => (
-                  <MenuItem value={item.id}>{item.nom}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+    const deleteProduct = () => {
+        zoneServices.DeleteZone(id)
+            .then(() => {
+                setDeleteProductDialog(false);
+                setProduct(showVille);
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'operation done', life: 3000 });
+                fetchZones();
+            })
+    };
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Ajouter
-            </Button>
-          </Box>
-        </Box>
-      </Container>
+    const exportCSV = () => {
+        dt.current.exportCSV();
+    };
 
-      <Table
-        columns={columns}
-        dataSource={vl}
-        loading={loading}
-        bordered
-        onChange={onChange}
-      />
-      <Modal
-        forceRender
-        title="Title"
-        open={open}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-        footer={[
-          <Button key="cancel" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={confirmLoading}
-            onClick={form.submit}
-          >
-            Save Changes
-          </Button>,
-        ]}
-      >
-        <Form
-          form={form}
-          onFinish={handleSubmit}
-          initialValues={{ nom: selectedZone?.nom }}
-        >
-          <Form.Item
-            label="Zone"
-            name="nom"
-            rules={[
-              {
-                required: true,
-                message: "Please input your zone!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item label="Ville" name="ville">
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={vl}
-              label="villes"
-              onChange={ModalhandleChange}
-              fullWidth
-              style={{ height: 14 }}
-            >
-              {allV?.map((item) => (
-                <MenuItem value={item.id}>{item.nom}</MenuItem>
-              ))}
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </ThemeProvider>
-  );
+    const onInputChange = (e, name) => {
+        const val = (e.target && e.target.value) || '';
+        let _product = { ...product };
+
+        _product[`${name}`] = val;
+
+        setProduct(_product);
+    };
+
+
+    const leftToolbarTemplate = () => {
+        return (
+            <div className="flex flex-wrap gap-2">
+                <Button label="Ajouter" icon="pi pi-plus" severity="success" onClick={openNew} />
+            </div>
+        );
+    };
+
+    const rightToolbarTemplate = () => {
+        return <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />;
+    };
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <React.Fragment>
+                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editProduct(rowData)} />
+                <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteProduct(rowData)} />
+            </React.Fragment>
+        );
+    };
+
+
+    const header = (
+        <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+            <h4 className="m-0">Espace Zones</h4>
+            <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+            </span>
+        </div>
+    );
+    const productDialogFooter = (
+        <React.Fragment>
+            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Save" icon="pi pi-check" onClick={saveProduct} />
+        </React.Fragment>
+    );
+    const deleteProductDialogFooter = (
+        <React.Fragment>
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteProductDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteProduct} />
+        </React.Fragment>
+    );
+
+
+
+    return (
+        <div>
+            <Toast ref={toast} />
+            <div className="card">
+                <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+                <DataTable ref={dt} value={zones} 
+                    dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Zones" globalFilter={globalFilter} header={header}>
+                    <Column field="id" header="Id" style={{ minWidth: '5rem' }}></Column>
+                    <Column field="nom" header="Nom" style={{ minWidth: '16rem' }}></Column>
+                    <Column field="ville" header="ville" style={{ minWidth: '12rem' }}></Column>
+                    <Column header="Action" body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
+                </DataTable>
+            </div>
+
+            <Dialog visible={productDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Pharmacie Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+                {product.photos && <img src={product.photos} alt={product.photos} className="product-image block m-auto pb-3" />}
+                <div className="field">
+                    <label htmlFor="nom" className="font-bold">
+                        Nom
+                    </label>
+                    <InputText id="nom" value={product.nom} onChange={(e) => onInputChange(e, 'nom')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.nom })} />
+                    {submitted && !product.name && <small className="p-error">nom is required.</small>}
+                </div>
+                <div className="card flex justify-content-center" style={{ marginTop: '1rem' }}>
+                    <Dropdown value={selectedVille} onChange={(e) => setSelectedVille(e.value)} options={villes} optionLabel="nom" placeholder="Select Ville"
+                        filter className="w-full" />
+                </div>
+            </Dialog>
+
+            <Dialog visible={deleteProductDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
+                <div className="confirmation-content">
+                    <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                    {product && (
+                        <span>
+                            Are you sure you want to delete <b>{product.nom}</b>?
+                        </span>
+                    )}
+                </div>
+            </Dialog>
+        </div>
+    );
 }

@@ -20,6 +20,7 @@ export default function Home() {
       headers: { Authorization: 'Bearer ' + accountService.getToken() }
     }).then((res) => {
       setPharmacies(res.data);
+      console.log(pharmacies)
     });
   }, []);
 //villes

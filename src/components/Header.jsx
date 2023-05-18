@@ -145,7 +145,7 @@ function ResponsiveAppBar() {
             </Button>
           </Box>
           {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-            <Box>
+            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} >
               <Button
                 key='Pharmacie'
                 onClick={handleCloseNavMenu}
@@ -161,7 +161,7 @@ function ResponsiveAppBar() {
             </Box>
           )}
           {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-            <Box   >
+            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}  >
               <Button
                 key='Ville'
                 onClick={handleCloseNavMenu}
@@ -177,7 +177,7 @@ function ResponsiveAppBar() {
             </Box>
           )}
           {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-            <Box   >
+            <Box  sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} >
               <Button
                 key='Zone'
                 onClick={handleCloseNavMenu}
@@ -193,7 +193,7 @@ function ResponsiveAppBar() {
             </Box>
           )}
           {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-            <Box   >
+            <Box  sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} >
               <Button
                 key='Garde'
                 onClick={handleCloseNavMenu}
@@ -209,7 +209,7 @@ function ResponsiveAppBar() {
             </Box>
           )}
           {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-            <Box   >
+            <Box  sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} >
               <Button
                 key='Garde_Pharmacie'
                 onClick={handleCloseNavMenu}
@@ -225,7 +225,7 @@ function ResponsiveAppBar() {
             </Box>
           )}
           {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-            <Box   >
+            <Box  sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} >
               <Button
                 key='User'
                 onClick={handleCloseNavMenu}

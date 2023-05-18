@@ -12,9 +12,11 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Test from '../pages/Test';
 import '../style/admin.css'
-import "primereact/resources/themes/lara-light-indigo/theme.css";     
-import "primereact/resources/primereact.min.css";
-import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';   // theme
+import 'primereact/resources/primereact.css';                       // core css
+import 'primeicons/primeicons.css';                                 // icons
+import 'primeflex/primeflex.css';                                   // css utility
+import '../style/flags.css'
 import { accountService } from '../service/account.service';
 
 const AdminRoute = () => {

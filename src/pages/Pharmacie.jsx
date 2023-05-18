@@ -1,461 +1,299 @@
-import React, { useEffect, useReducer, useState } from "react";
-import PublicIcon from "@mui/icons-material/Public";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { createTheme } from "@mui/material/styles";
-import { Card, CardContent, FormControl } from '@mui/material';
-import { Table, Space, Popconfirm, Modal, Form, Input } from "antd";
-import MenuItem from "@mui/material/MenuItem";
-import Grid from '@mui/material/Grid';
-import { Select } from "antd";
-import axios from "../service/caller.service.jsx"
-import { Upload } from "antd";
-import { Button } from "@mui/material";
-import { UploadOutlined } from '@ant-design/icons';
-import img from "../assets/logo.png"
+import React, { useState, useEffect, useRef } from 'react';
+import { classNames } from 'primereact/utils';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Toast } from 'primereact/toast';
+import { Button } from 'primereact/button';
+import { FileUpload } from 'primereact/fileupload';
+import { Toolbar } from 'primereact/toolbar';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { InputNumber } from 'primereact/inputnumber';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+import { pharmacieService } from '../service/pharmacie.service';
+import { zoneServices } from '../service/zone.service';
+import { Dropdown } from 'primereact/dropdown';
 
-const theme = createTheme();
 
 export default function Pharmacie() {
-  const [loading, setLoad] = useState(false);
-  const [zones, setZones] = useState([]);
-  const [z, setZ] = useState("");
-  const [pharmacies, setPharmacies] = useState();
-  const [uptable, forceupdate] = useReducer((x) => x + 1, 0);
-  const [file, setFile] = useState("");
-  //modal
-  const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [setModalText] = useState("Content of the modal");
-  const [form] = Form.useForm();
-  const [modalepharmacie, setPH_modal] = useState("");
-  const [modalegarde, setG_modal] = useState("");
-  const [selectedGarde_Ph, setSelectedGarde_Ph] = useState(null);
-  const [fileList, setFileList] = useState("");
-  const [fileModale, setFileModale] = useState(img);
-  const [selectedPharmacie, setSelectedPharmacie] = useState(null);
-  //
-  useEffect(() => {
-    axios.get("/api/controller/zones/").then((res) => {
-      setZones(res.data);
-    });
-  }, []);
+    const [pharmacies, setPharmacies] = useState(null);
+    const [productDialog, setProductDialog] = useState(false);
+    const [deleteProductDialog, setDeleteProductDialog] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const [zones, setZones] = useState(null)
+    const toast = useRef(null);
+    const dt = useRef(null);
+    const [file, setFile] = useState("");
+    const [selectedZone, setSelectedZone] = useState(null);
+    const [zonevalue, setZonevalue] = useState(null)
+    const [id, setId] = useState('')
 
-  // SAVE
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-
-    var d = {
-      nom: data.get("nom"),
-      adresse: data.get("adresse"),
-      latitude: data.get("latitude"),
-      longitude: data.get("longitude"),
-      photos: file,
-      zone: {
-        id: z,
-      },
-    };
-    if (!d) {
-      alert(" vide !");
-    } else {
-      try {
-        console.log(d);
-        await axios.post(`/api/controller/pharmacies/save`, d).then(() => {
-          forceupdate();
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-  //ALL pharmacies
-  const Allpharmacies = async () => {
-    setLoad(true);
-    try {
-      await axios.get("/api/controller/pharmacies/").then((res) => {
-        console.log(res.data);
-        setPharmacies(
-          res.data.map((item) => ({
-            id: item.id,
-            nom: item.nom,
-            adresse: item.adresse,
-            latitude: item.latitude,
-            longitude: item.longitude,
-            photos: item.photos,
-            zone: item.zone.nom,
-          }))
+    useEffect(() => {
+        zoneServices.getZones().then((res) =>
+            setZones(
+                res.data.map((item) => ({
+                    id: item.id,
+                    nom: item.nom,
+                })))
         );
-      });
-    } catch (err) {
-      console.log(err);
-    }
-    setLoad(false);
-  };
-  useEffect(() => {
-    Allpharmacies();
-  }, [uptable]);
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-    },
-    {
-      title: "Nom",
-      dataIndex: "nom",
-      key: "nom",
-    },
-    {
-      title: "adresse",
-      dataIndex: "adresse",
-      key: "adresse",
-    },
-    {
-      title: "latitude",
-      dataIndex: "latitude",
-      key: "latitude",
-    },
-    {
-      title: "longitude",
-      dataIndex: "longitude",
-      key: "longitude",
-    },
-    {
-      title: "photos",
-      dataIndex: "photos",
+    }, []);
 
-      render: (t, r) => (
-        <img
-          src={r.photos}
-          style={{ width: "30px", height: "30px", objectFit: "cover" }}
-          alt="pharmacy"
-        />
-      ),
-      key: "photos",
-    },
-    {
-      title: "zone",
-      dataIndex: "zone",
-      key: "zone",
-    },
-    {
-      title: "Action",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button variant="outlined" onClick={() => handleUpdate(record)}>
-            Update
-          </Button>
+    useEffect(() => {
+        console.log("zonevalueuseEffect  ", zonevalue);
+    }, [zonevalue]);
 
-          <Popconfirm
-            title="Sure to delete?"
-            onConfirm={() => deletePharmacie(record.id)}
-          >
-            <Button variant="outlined">Delete</Button>
-          </Popconfirm>
-        </Space>
-      ),
-      key: "action",
-    },
-  ];
-
-  const handleChange = (event) => {
-    setZ(event);
-    console.log("setZ ", event);
-  };
-  //update 
-  const handleUpdate = (record) => {
-    console.log(record)
-    setSelectedPharmacie(record)
-    setFileList(record.photos)
-    setOpen(true);
-  };
-
-  // Delete
-  function deletePharmacie(id) {
-    axios.delete(`/api/controller/pharmacies/delete/${id}`).then((result) => {
-      console.log("delete ", id);
-      Allpharmacies()
-    });
-    forceupdate();
-  }
-  // Modal update
-  const handleCancel = () => {
-    setSelectedPharmacie(null)
-    setFileList(null)
-    setOpen(false);
-    form.resetFields();
-  };
-  const handleSubmit = () => {
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setConfirmLoading(false);
-      setOpen(false);
-    }, 1000);
-  };
-  const ModalhandleChangeZones = (e) => {
-    console.log(e)
-  };
-  const beforeUpload = (file) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUrl = event.target.result;
-      setFileModale(dataUrl);
+    var showPharmacie = {
+        nom: '',
+        adresse: '',
+        latitude: 0,
+        longitude: 0,
+        photos: null,
+        zone: null,
     };
-    reader.readAsDataURL(file);
-    return false;
-  };
-  //
-  useEffect(() => {
-    console.log("SelectedZone after update: ", selectedPharmacie);
-  }, [selectedPharmacie]);
-  useEffect(() => {
-    form.setFieldsValue({ nom: selectedPharmacie?.nom });
-  }, [selectedPharmacie, form]);
-  return (
-    <Container component="main" maxWidth="lg">
-      <Card sx={{ marginTop: 3 }} >
-        <CardContent>
-          <form onSubmit={onSubmit}>
-            <Box
-              sx={{
-                marginTop: 3,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <PublicIcon sx={{ m: 3 }}>
-                <LockOutlinedIcon />
-              </PublicIcon>
-              <Typography component="h1" variant="h5">
-                Ajouter Pharmacie
-              </Typography>
-              <Box sx={{ mt: 3 }}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={4}>
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="nom"
-                      label="nom"
-                      id="nom"
-                      autoFocus
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="adresse"
-                      label="adresse"
-                      id="adresse"
-                      autoFocus
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="latitude"
-                      label="latitude"
-                      id="latitude"
-                      autoFocus
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="longitude"
-                      label="longitude"
-                      id="longitude"
-                      autoFocus
-                    />
-                  </Grid>
+    const [product, setProduct] = useState(showPharmacie);
 
-                  {/*    
-            <input type="file" id="photos" onChange={handleChangeImage} />
-           */}
-                  <Grid item xs={12} sm={4}>
-                    <Upload.Dragger
-                      name="photos"
-                      id="photos"
-                      maxCount={1}
-                      listType="picture"
-                      action="http://localhost:3000/Pharmacie"
-                      accept=".png,.PNG,.JPEG,.jpeg,.jpg"
+    const fetchPharmacies = async () => {
+        pharmacieService.getAllPharmacies().then((res) =>
+            setPharmacies(
+                res.data.map((item) => ({
+                    id: item.id,
+                    nom: item.nom,
+                    adresse: item.adresse,
+                    latitude: item.latitude,
+                    longitude: item.longitude,
+                    photos: item.photos,
+                    zone: item.zone.nom,
+                })))
+        );
+    };
 
-                      beforeUpload={(file) => {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                          const dataUrl = event.target.result;
-                          console.log(dataUrl);
-                          setFile(dataUrl);
-                        };
-                        reader.readAsDataURL(file);
-                        return false;
-                      }}
-                    >
-                      <p className="ant-upload-text">Drag image here</p>
-                    </Upload.Dragger>
+    useEffect(() => {
+        fetchPharmacies();
+    }, [productDialog]);
 
-                  </Grid>
 
-                  <FormControl fullWidth style={{ marginTop: 10 }}>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={z}
-                      label="zone"
-                      onChange={handleChange}
-                    >
-                      {zones?.map((item) => (
-                        <MenuItem value={item.id}>{item.nom}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+    const openNew = () => {
+        setProduct(showPharmacie);
+        setSubmitted(false);
+        setProductDialog(true);
+    };
 
-                </Grid>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  Ajouter
-                </Button>
-              </Box>
-            </Box>
-          </form>
-        </CardContent>
-      </Card>
-      <Table
-        columns={columns}
-        dataSource={pharmacies}
-        loading={loading}
-        bordered
-        size="small"
-      />
-      <Modal
-        forceRender
-        title="Title"
-        open={open}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-        footer={[
-          <Button key="cancel" onClick={handleCancel}>
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={confirmLoading}
-            onClick={form.submit}
-          >
-            Save Changes
-          </Button>,
-        ]}
-      >
-        <Form
-          form={form}
-          onFinish={handleSubmit}
+    const hideDialog = () => {
+        setSubmitted(false);
+        setProductDialog(false);
+    };
 
-        >
-          <Form.Item
-            label="Nom"
-            name="nom"
-            rules={[
-              {
-                required: true,
-                message: "Please input your zone!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Adresse"
-            name="adresse"
-            rules={[
-              {
-                required: true,
-                message: "Please input your zone!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Latitude"
-            name="latitude"
-            rules={[
-              {
-                required: true,
-                message: "Please input your zone!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Longitude"
-            name="longitude"
-            rules={[
-              {
-                required: true,
-                message: "Please input your zone!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item>
-            <Upload
-              name="photosModale"
-              maxCount={1}
-              listType="picture"
-              action="http://localhost:3000/Pharmacie"
-              accept=".png,.PNG,.JPEG,.jpeg,.jpg"
-              beforeUpload={beforeUpload}
-              defaultFileList={[
-                {
-                  uid: 'img',
-                  name: 'imh.png',
-                  status: 'done',
-                  url: fileModale,
-                },
-              ]}
-            >
-              <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
-            </Upload>
-          </Form.Item>
-          <Form.Item label="zonesModal" name="zonesModal">
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={z}
-              label="zones"
-              onChange={ModalhandleChangeZones}
-              fullWidth
-              style={{ height: 14 }}
-            >
-              {zones?.map((item) => (
-                <MenuItem value={item.id}>{item.nom}</MenuItem>
-              ))}
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </Container>
+    const hideDeleteProductDialog = () => {
+        setDeleteProductDialog(false);
+    };
 
-  );
+
+
+    const saveProduct = () => {
+        setSubmitted(true);
+        if (product.nom.trim()) {
+            const newProduct = {
+                ...product,
+                photos: file,
+                zone: selectedZone
+            };
+            console.log("save_pharmacie", newProduct);
+            setProductDialog(false);
+            setProduct(newProduct);
+            console.log("product ", product)
+            pharmacieService.addPharmacie(newProduct).then(() => {
+                fetchPharmacies();
+            })
+        }
+    };
+
+    const editProduct = (product) => {
+        const newProduct = {
+            ...product,
+            photos: file,
+            zone: selectedZone
+        };
+        setProduct(newProduct);
+        console.log(product)
+        setProductDialog(true);
+    };
+
+    const confirmDeleteProduct = (product) => {
+        setId(product.id);
+        setDeleteProductDialog(true);
+    };
+
+    const deleteProduct = () => {
+        pharmacieService.DeletePharmacie(id)
+            .then(() => {
+                console.log("_pharmacie ")
+                setDeleteProductDialog(false);
+                setProduct(showPharmacie);
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+                fetchPharmacies();
+            })
+    };
+
+    const exportCSV = () => {
+        dt.current.exportCSV();
+    };
+
+    const onInputChange = (e, name) => {
+        const val = (e.target && e.target.value) || '';
+        let _product = { ...product };
+
+        _product[`${name}`] = val;
+
+        setProduct(_product);
+    };
+
+    const onInputNumberChange = (e, name) => {
+        const val = e.value || 0;
+        let _product = { ...product };
+
+        _product[`${name}`] = val;
+
+        setProduct(_product);
+    };
+
+    const leftToolbarTemplate = () => {
+        return (
+            <div className="flex flex-wrap gap-2">
+                <Button label="Ajouter" icon="pi pi-plus" severity="success" onClick={openNew} />
+            </div>
+        );
+    };
+
+    const rightToolbarTemplate = () => {
+        return <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={exportCSV} />;
+    };
+
+    const imageBodyTemplate = (rowData) => {
+        return <img src={rowData.photos} alt={rowData.photos} className="shadow-2 border-round" style={{ width: '64px' }} />;
+    };
+
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <React.Fragment>
+                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editProduct(rowData)} />
+                <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteProduct(rowData)} />
+            </React.Fragment>
+        );
+    };
+
+
+    const header = (
+        <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
+            <h4 className="m-0">Espace Pharmacies</h4>
+            <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText type="search" onInput={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
+            </span>
+        </div>
+    );
+    const productDialogFooter = (
+        <React.Fragment>
+            <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
+            <Button label="Save" icon="pi pi-check" onClick={saveProduct} />
+        </React.Fragment>
+    );
+    const deleteProductDialogFooter = (
+        <React.Fragment>
+            <Button label="No" icon="pi pi-times" outlined onClick={hideDeleteProductDialog} />
+            <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteProduct} />
+        </React.Fragment>
+    );
+
+    // photos
+
+    const photosUpload = async (event) => {
+        const file = event.files[0];
+        const reader = new FileReader();
+        let blob = await fetch(file.objectURL).then((r) => r.blob());
+        reader.readAsDataURL(blob);
+        reader.onloadend = function () {
+            const base64data = reader.result;
+            setFile(base64data);
+            console.log(base64data)
+        };
+    };
+
+    return (
+        <div>
+            <Toast ref={toast} />
+            <div className="card">
+                <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+                <DataTable ref={dt} value={pharmacies}
+                    dataKey="id" paginator rows={10} rowsPerPageOptions={[5, 10, 25]}
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Pharmacies" globalFilter={globalFilter} header={header}>
+                    <Column field="id" header="Id" style={{ minWidth: '5rem' }}></Column>
+                    <Column field="nom" header="Nom" style={{ minWidth: '16rem' }}></Column>
+                    <Column field="adresse" header="adresse" style={{ minWidth: '10rem' }}></Column>
+                    <Column field="latitude" header="latitude" style={{ minWidth: '8rem' }}></Column>
+                    <Column field="longitude" header="longitude" style={{ minWidth: '12rem' }}></Column>
+                    <Column field="photos" header="photos" body={imageBodyTemplate}></Column>
+                    <Column field="zone" header="zone" style={{ minWidth: '12rem' }}></Column>
+                    <Column header="Action" body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
+                </DataTable>
+            </div>
+
+            <Dialog visible={productDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Pharmacie Details" modal className="p-fluid" footer={productDialogFooter} onHide={hideDialog}>
+                {product.photos && <img src={product.photos} alt={product.photos} className="product-image block m-auto pb-3" />}
+                <div className="field">
+                    <label htmlFor="nom" className="font-bold">
+                        Nom
+                    </label>
+                    <InputText id="nom" value={product.nom} onChange={(e) => onInputChange(e, 'nom')} required autoFocus className={classNames({ 'p-invalid': submitted && !product.nom })} />
+                    {submitted && !product.name && <small className="p-error">nom is required.</small>}
+                </div>
+                <div className="field">
+                    <label htmlFor="adresse" className="font-bold">
+                        adresse
+                    </label>
+                    <InputTextarea id="adresse" value={product.adresse} onChange={(e) => onInputChange(e, 'adresse')} required rows={3} cols={20} />
+                    {submitted && !product.adresse && <small className="p-error">adresse is required.</small>}
+                </div>
+                <div className="formgrid grid">
+                    <div className="field col">
+                        <label htmlFor="latitude" className="font-bold">
+                            latitude
+                        </label>
+                        <InputNumber id="latitude" value={product.latitude} onValueChange={(e) => onInputNumberChange(e, 'latitude')} />
+                        {submitted && !product.latitude && <small className="p-error">latitude is required.</small>}
+                    </div>
+                    <div className="field col">
+                        <label htmlFor="longitude" className="font-bold">
+                            longitude
+                        </label>
+                        <InputNumber id="longitude" value={product.longitude} onValueChange={(e) => onInputNumberChange(e, 'longitude')} />
+                        {submitted && !product.longitude && <small className="p-error">longitude is required.</small>}
+                    </div>
+                </div>
+                <div className="card flex justify-content-center" style={{ marginTop: '1rem' }}>
+                    <Dropdown value={selectedZone} onChange={(e) => setSelectedZone(e.value)} options={zones} optionLabel="nom" placeholder="Select zone"
+                        filter className="w-full" />
+                </div>
+                <div className="card" style={{ marginTop: '1rem' }}>
+                    <label htmlFor="photo" className="font-bold">
+                        Photo
+                    </label>
+                    <FileUpload name="photos" url={'/api/upload'} multiple accept="image/*" customUpload uploadHandler={photosUpload} maxFileSize={1000000} emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
+                </div>
+            </Dialog>
+
+            <Dialog visible={deleteProductDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="Confirm" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
+                <div className="confirmation-content">
+                    <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                    {product && (
+                        <span>
+                            Are you sure you want to delete <b>{product.nom}</b>?
+                        </span>
+                    )}
+                </div>
+            </Dialog>
+        </div>
+    );
 }

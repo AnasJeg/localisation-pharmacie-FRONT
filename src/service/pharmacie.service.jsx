@@ -8,8 +8,8 @@ let getAllPharmacies = () => {
     return Axios.get('/api/controller/pharmacies/')
 }
 
-let getPharmacies = (uid) => {
-    return Axios.get('/users/'+uid)
+let getPharmacie = (uid) => {
+    return Axios.get('/api/controller/pharmacies/find/'+uid)
 }
 
 let addPharmacie = (d) =>{
@@ -23,5 +23,5 @@ let DeletePharmacie = (id) =>{
 
 // Décaraltion des esrvices pour import
 export const pharmacieService = {
-    getAllPharmacies, getPharmacies ,addPharmacie ,DeletePharmacie
+    getAllPharmacies, getPharmacie ,addPharmacie ,DeletePharmacie
 }
