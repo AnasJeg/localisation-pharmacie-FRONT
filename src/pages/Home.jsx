@@ -7,14 +7,16 @@ import { Slide } from "react-awesome-reveal";
 import { Select } from "antd";
 import axios from "../service/caller.service.jsx"
 import { accountService } from "../service/account.service.jsx";
+import { GardePharmacieService } from "../service/gardepharmacie.service.jsx";
+import { pharmacieService } from "../service/pharmacie.service.jsx";
 
 export default function Home() {
   const [pharmacies, setPharmacies] = useState();
   const [villes, setVilles] = useState([])
   const [vl, setVl] = useState()
-  const [zones , setZones] =useState([])
-  const [zn ,setZn]=useState()
-  const [gr ,setGr]=useState()
+  const [zones, setZones] = useState([])
+  const [zn, setZn] = useState()
+  const [gr, setGr] = useState()
   useEffect(() => {
     axios.get('/api/controller/pharmacies/', {
       headers: { Authorization: 'Bearer ' + accountService.getToken() }
@@ -23,9 +25,9 @@ export default function Home() {
       console.log(pharmacies)
     });
   }, []);
-//villes
+  //villes
   useEffect(() => {
-    axios.get("/api/controller/villes/",{
+    axios.get("/api/controller/villes/", {
       headers: { Authorization: 'Bearer ' + accountService.getToken() }
     })
       .then((res) => {
@@ -36,48 +38,65 @@ export default function Home() {
   const onChangeVille = (value) => {
     console.log(`selected ${value}`);
     setVl(value)
-     setZn('')
+    setZn('')
     findZonesByVille(value);
   };
   const onSearchVille = (label) => {
     console.log('search:', label);
   };
   //zones
-  function findZonesByVille(nom){
-    axios.get(`/api/controller/zones/ville/${nom}`,{
+  function findZonesByVille(nom) {
+    axios.get(`/api/controller/zones/ville/${nom}`, {
       headers: { Authorization: 'Bearer ' + accountService.getToken() }
     })
-    .then((res) => {
-      setZones(res.data)
-    })
+      .then((res) => {
+        setZones(res.data)
+      })
   }
   const onChangeZones = (value) => {
     console.log(`selected ${value}`);
     setZn(value)
   };
-  const onSearchZones= (value) => {
+  const onSearchZones = (value) => {
     console.log('search:', value);
   };
   //gardes
-  const gardes=['jour','nuit']
-
+  const [gardes, setGardes] = useState([])
+  useEffect(() => {
+    axios.get("/api/controller/gardes/", {
+      headers: { Authorization: 'Bearer ' + accountService.getToken() }
+    })
+      .then((res) => {
+        console.log("gardes ", res.data)
+        setGardes(res.data)
+      })
+  }, [])
   const onChangeGarde = (value) => {
-    console.log(`selected ${value}`);
+    console.log(`selected garde  ${value}`);
     setGr(value)
   };
-  const onSearchGarde= (value) => {
+  const onSearchGarde = (value) => {
     console.log('search:', value);
   };
   //pharmacie 
   useEffect(() => {
-    if(vl && zn ){
+    if (vl && !zn) {
+      pharmacieService.PharmacieByVille(vl).then((res) => {
+        console.log("res.data", res.data)
+        setPharmacies(res.data);
+      });
+    } else if (vl && zn) {
       axios.get(`/api/controller/pharmacies/ville/${vl}/zone/${zn}`).then((res) => {
-    //  axios.get(`/api/pharmacies/ville/${vl}/zone/${zn}/pharmacies/${gr}`).then((res) => {  
-        console.log("res.data",res.data)
+        console.log("res.data", res.data)
+        setPharmacies(res.data);
+      });
+    } else if (vl && zn && gr) {
+      GardePharmacieService.Filterpharmacies(vl, zn, gr).then((res) => {
+        console.log("avec garde ", res.data)
         setPharmacies(res.data);
       });
     }
-  }, [vl,zn])
+  }, [vl, zn, gr])
 
   return (
     <Container id="service">
@@ -121,8 +140,8 @@ export default function Home() {
               width: '20%',
             }}
             options={gardes.map((item) => ({
-              value: item,
-              label: item,
+              value: item.type,
+              label: item.type,
             }))}
           />
         </div>

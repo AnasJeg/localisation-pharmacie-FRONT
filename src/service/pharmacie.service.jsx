@@ -20,8 +20,11 @@ let DeletePharmacie = (id) =>{
     return Axios.delete(`/api/controller/pharmacies/delete/${id}`)
 }
 
+let PharmacieByVille = (ville) =>{
+    return Axios.get(`/api/controller/pharmacies/ville?nom=${ville}`)
+}
 
 // Décaraltion des esrvices pour import
 export const pharmacieService = {
-    getAllPharmacies, getPharmacie ,addPharmacie ,DeletePharmacie
+    getAllPharmacies, getPharmacie ,addPharmacie ,DeletePharmacie ,PharmacieByVille
 }

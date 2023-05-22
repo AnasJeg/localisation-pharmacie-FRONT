@@ -8,10 +8,7 @@ export default function MyCard(props) {
     );
     return (
         <div className="card flex justify-content-center">
-            <Card title={title} subTitle={subtitle} header={header} className="md:w-25rem"  style={{ border: '1px solid #ddd' }}>
-                <p className="m-0" >
-                   {btn}
-                   </p>
+            <Card title={title} subTitle={subtitle} header={header} footer={btn} className="md:w-25rem"  style={{ border: '1px solid #ddd' }}>
             </Card>
         </div>
     )

@@ -9,6 +9,9 @@ let login = (emailL,passwordL) => {
       });
 }
 
+let register = (r)=>{
+    return Axios.post(`/api/auth/register`,r)
+}
 
 let saveToken = (token) => {
     localStorage.setItem('token', token)
@@ -44,5 +47,5 @@ let getRole = () => {
 }
 
 export const accountService = {
-    login, saveToken, logout, isLogged, getToken, getTokenInfo ,saveRole,getRole
+    login, register, saveToken, logout, isLogged, getToken, getTokenInfo ,saveRole,getRole
 }

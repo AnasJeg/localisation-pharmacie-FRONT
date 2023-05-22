@@ -73,11 +73,11 @@ export default function Test() {
 
     var showGardePharmacie = {
         pg: {
-            dateDebut: dateD,
-            pharmacie: selectedPharmacie,
-            garde: selectedGarde
+            dateDebut: '',
+            pharmacie: '',
+            garde: ''
         },
-        dateFin: dateF
+        dateFin: ''
     };
     const [product, setProduct] = useState(showGardePharmacie);
 
@@ -135,15 +135,7 @@ export default function Test() {
         })
     };
 
-    const confirmUpdateProduct = (product) => {
-        console.log(product)
-        setDD(product.dateDebut)
-        setPh(product.pharmacie)
-        setGr(product.garde)
-        setProductDialog(true);
-    };
     const editProduct = (product) => {
-        setSubmitted(true);
         const newProduct = {
             pg: {
                 dateDebut: dateD,
@@ -152,9 +144,18 @@ export default function Test() {
             },
             dateFin: dateF
         };
-        console.log("sEdit_zone", newProduct);
-        setProductDialog(false)
-     
+        setProduct(newProduct);
+        console.log('Edit product', newProduct)
+        setProductDialog(true);
+        GardePharmacieService.UpdateGardePharmacie(product.dateDebut, product.pharmacie,product.garde,
+            newProduct
+            )
+            .then(() => {
+                setDeleteProductDialog(false);
+                setProduct(showGardePharmacie);
+                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'operation done', life: 3000 });
+                fetchGardePharmacie();
+            })
     };
 
     const confirmDeleteProduct = (product) => {
@@ -166,7 +167,7 @@ export default function Test() {
     };
 
     const deleteProduct = () => {
-        GardePharmacieService.DeleteGardePharmacie(dD,ph,gr)
+        GardePharmacieService.DeleteGardePharmacie(dD, ph, gr)
             .then(() => {
                 setDeleteProductDialog(false);
                 setProduct(showGardePharmacie);
@@ -194,7 +195,7 @@ export default function Test() {
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => confirmUpdateProduct(rowData)} />
+                <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editProduct(rowData)} />
                 <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeleteProduct(rowData)} />
             </React.Fragment>
         );
