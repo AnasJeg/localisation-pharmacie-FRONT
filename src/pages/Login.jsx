@@ -1,109 +1,98 @@
-import React, { useState } from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import React, { useRef, useState } from 'react';
+import { Checkbox } from 'primereact/checkbox';
+import { Button } from 'primereact/button';
+import { Password } from 'primereact/password';
+import { InputText } from 'primereact/inputtext';
+import { classNames } from 'primereact/utils';
+import { Link, useNavigate } from 'react-router-dom';
+import { Toast } from 'primereact/toast';
 import { accountService } from '../service/account.service';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
+const Login = () => {
+  const toast = useRef(null);
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('')
+  const [checked, setChecked] = useState(false);
 
+  const navigate = useNavigate();
+  const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden');
 
-const theme = createTheme();
-
-export default function Login({isAuth, setAuth}) {
-
- const navigate = useNavigate();
-
-
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
-    const data = new FormData(e.currentTarget);
-
-    try{
-      accountService.login(data.get("email"),data.get("password"))
-      .then(res => {
-          accountService.saveToken(res.data.access_token)
-          accountService.saveRole(res.data.role)
+    if (email && password) {
+      try {
+        const res = await accountService.login(email, password)
+        accountService.saveToken(res.data.access_token)
+        accountService.saveRole(res.data.role)
         console.log(accountService.getRole())
-          navigate('/app', {replace: true})
-      })
-    }catch(error){
-    console.log(error)
-    } 
-}
-
-
+        navigate('/app', { replace: true })
+      } catch (error) {
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: ' Email or password Invalid!',
+          life: 3000
+        });
+      }
+    } else {
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'champ vide !', life: 3000 });
+    }
+  }
 
   return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Login
-          </Typography>
-          <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
+    <div className={containerClassName}>
+      <Toast ref={toast} />
+      <div className="flex flex-column align-items-center justify-content-center">
+        <div style={{ borderRadius: '56px', padding: '0.3rem', background: 'linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)' }}>
+          <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
+            <div className="text-center mb-5">
+              <LockOutlinedIcon />
+              <div className="text-900 text-3xl font-medium mb-3">Welcome</div>
+              <span className="text-600 font-medium">Sign in to continue</span>
+            </div>
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Login
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Mot de passe oublié ?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="/Register" variant="body2">
-                  {"Vous n'avez pas de compte? Inscrivez-vous"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
+            <div>
+            <div className="p-inputgroup mt-3 flex-1">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-at"></i>
+                </span>
+                <InputText id="Email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 md:w-30rem" />
+              </div>
+              <div className="p-inputgroup mt-3 flex-1">
+                <span className="p-inputgroup-addon">
+                  <i className="pi pi-lock"></i>
+                </span>
+                <Password id="Password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} toggleMask inputClassName="w-full p-3 md:w-30rem" />
+              </div> 
+              <div className="flex align-items-center justify-content-between mb-5 mt-5 gap-5">
+                <div className="flex align-items-center">
+                  <Checkbox inputid="rememberme1" checked={checked} onChange={(e) => setChecked(e.checked)} className="mr-2"></Checkbox>
+                  <label htmlFor="rememberme1">Remember me</label>
+                </div>
+                <a className="font-medium no-underline ml-2 text-right cursor-pointer" style={{ color: 'var(--primary-color)' }}>
+                  Forgot password?
+                </a>
+              </div>
+              <Button label="Sign In" className="w-full p-3 text-xl" onClick={onSubmit}></Button>
+            </div>
+            <div style={{ marginLeft: '150px', marginTop: '15px' }}>
+              <Link className="font-medium no-underline text-right cursor-pointer" style={{ color: 'var(--primary-color)' }} to="/Register">Vous n'avez pas de compte? Inscrivez-vous</Link>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
   );
-}
+};
+
+Login.getLayout = function getLayout(page) {
+  return (
+    <React.Fragment>
+      {page}
+    </React.Fragment>
+  );
+};
+export default Login;
