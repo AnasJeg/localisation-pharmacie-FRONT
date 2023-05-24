@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import Home from '../pages/Home';
 import Ville from '../pages/Ville';
 import Pharmacie from '../pages/Pharmacie';
@@ -19,34 +19,34 @@ import 'primeflex/primeflex.css';
 import 'antd/dist/reset.css';                                   // css utility
 import '../style/flags.css'
 import { accountService } from '../service/account.service';
+import ErrorPage from '../pages/ErrorPage';
 
 const AdminRoute = () => {
     return (
         <div className='Admin'>
-        <Header />
-        <Routes>
-            <Route>
-            <Route index element={<Home/>}/>
-                <Route path="home" element={<Home />} />
-                {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-                <Route path="Ville" element={<Ville />} />
-                )}
-                 {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-                <Route path="Pharmacie" element={<Pharmacie />} />
-                 )}
-                <Route path='Zone' element={<Zone />} />
-                {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-                <Route path='Garde' element={<Garde />} />
-                )}
-                 {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
-                <Route path='Garde_Pharmacie' element={<GardePharmacie />} />
-                 )}
-                <Route path='Localisation/:id' element={<Localisation />} />
-                <Route path='Local/:id' element={<Map />} />
-                <Route path='Test' element={<Test/>} />
-            </Route>
-        </Routes>
-        <Footer/>
+            <Header />
+
+            <Routes>
+                <Route path="/">
+                    <Route index element={<Home />} />
+                    <Route path="home" element={<Home />} />
+                    {accountService.isLogged && accountService.getRole() === 'ADMIN' && (
+                        <>
+                            <Route path="Ville" element={<Ville />} />
+                            <Route path='Zone' element={<Zone/>} />
+                            <Route path="Pharmacie" element={<Pharmacie />} />
+                            <Route path="Garde" element={<Garde />} />
+                            <Route path="Garde_Pharmacie" element={<GardePharmacie />} />
+                            <Route path="Test" element={<Test />} />
+                        </>
+                    )}
+                    <Route path="Localisation/:id" element={<Localisation />} />
+                    <Route path="Local/:id" element={<Map />} />
+                    <Route path="*" element={<ErrorPage />} />
+                </Route>
+            </Routes>
+            <Footer />
+
         </div>
     );
 };

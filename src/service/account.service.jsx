@@ -20,6 +20,7 @@ let saveToken = (token) => {
 
 let logout = () => {
     localStorage.removeItem('token')
+    localStorage.clear();
 }
 
 

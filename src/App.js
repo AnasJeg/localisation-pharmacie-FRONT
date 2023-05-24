@@ -3,10 +3,11 @@ import './App.css';
 import AuthRoute from './Auth/AuthRoute';
 import AdminRoute from './Auth/AdminRoute';
 import ProtectedRoute from './components/ProtectedRoute';
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'antd/dist/reset.css';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';   // theme
+import 'primereact/resources/primereact.css';                       // core css
+import 'primeicons/primeicons.css';                                 // icons
+import 'primeflex/primeflex.css';
+
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
               <AdminRoute />
             </ProtectedRoute>
           }/>
+        
         </Routes>
     </div>
   );

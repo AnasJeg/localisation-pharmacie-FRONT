@@ -48,8 +48,10 @@ export default function Pharmacie() {
         adresse: '',
         latitude: 0,
         longitude: 0,
+        rating: '',
         photos: null,
-        zone: null,
+        zone: null
+        
     };
     const [product, setProduct] = useState(showPharmacie);
 
@@ -62,8 +64,10 @@ export default function Pharmacie() {
                     adresse: item.adresse,
                     latitude: item.latitude,
                     longitude: item.longitude,
+                    rating: item.rating,
                     photos: item.photos,
                     zone: item.zone.nom,
+                    
                 })))
         );
     };
@@ -101,7 +105,6 @@ export default function Pharmacie() {
             console.log("save_pharmacie", newProduct);
             setProductDialog(false);
             setProduct(newProduct);
-            console.log("product ", product)
             pharmacieService.addPharmacie(newProduct).then(() => {
                 fetchPharmacies();
             })
@@ -236,6 +239,7 @@ export default function Pharmacie() {
                     <Column field="longitude" header="longitude" style={{ minWidth: '12rem' }}></Column>
                     <Column field="photos" header="photos" body={imageBodyTemplate}></Column>
                     <Column field="zone" header="zone" style={{ minWidth: '12rem' }}></Column>
+                    <Column field="rating" header="rating" style={{ minWidth: '12rem' }}></Column>
                     <Column header="Action" body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
                 </DataTable>
             </div>
@@ -261,15 +265,22 @@ export default function Pharmacie() {
                         <label htmlFor="latitude" className="font-bold">
                             latitude
                         </label>
-                        <InputNumber id="latitude" value={product.latitude} onValueChange={(e) => onInputNumberChange(e, 'latitude')} />
+                        <InputNumber id="latitude" value={product.latitude} onValueChange={(e) => onInputNumberChange(e, 'latitude')}  maxFractionDigits={20} />
                         {submitted && !product.latitude && <small className="p-error">latitude is required.</small>}
                     </div>
                     <div className="field col">
                         <label htmlFor="longitude" className="font-bold">
                             longitude
                         </label>
-                        <InputNumber id="longitude" value={product.longitude} onValueChange={(e) => onInputNumberChange(e, 'longitude')} />
+                        <InputNumber id="longitude" value={product.longitude} onValueChange={(e) => onInputNumberChange(e, 'longitude')}   maxFractionDigits={20}/>
                         {submitted && !product.longitude && <small className="p-error">longitude is required.</small>}
+                    </div>
+                    <div className="field col">
+                        <label htmlFor="rating" className="font-bold">
+                        rating
+                        </label>
+                        <InputNumber id="rating" value={product.rating} onValueChange={(e) => onInputNumberChange(e, 'rating')}  maxFractionDigits={1}/>
+                        {submitted && !product.rating && <small className="p-error">rating is required.</small>}
                     </div>
                 </div>
                 <div className="card flex justify-content-center" style={{ marginTop: '1rem' }}>

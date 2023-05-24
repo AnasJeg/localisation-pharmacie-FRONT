@@ -151,7 +151,7 @@ export default function Home() {
           <Card
             Icon={item.photos}
             title={item.nom}
-            subtitle={item.zone.ville.nom}
+            subtitle={item.zone?.ville.nom}
             btn={<Link style={{ textDecoration: 'none', color: 'blue' }} to={`/app/Local/${item.id}`}>Detail</Link>}
           />
         ))}
