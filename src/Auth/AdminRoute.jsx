@@ -23,9 +23,8 @@ import ErrorPage from '../pages/ErrorPage';
 
 const AdminRoute = () => {
     return (
-        <div className='Admin'>
-            <Header />
-
+        <div className='Admin'>  
+            <Header/>
             <Routes>
                 <Route path="/">
                     <Route index element={<Home />} />

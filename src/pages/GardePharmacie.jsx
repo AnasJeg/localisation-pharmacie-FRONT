@@ -52,7 +52,7 @@ export default function GardePharmacie() {
   // SAVE
   const onSubmit = async (event) => {
     event.preventDefault();
-    var d = {
+    let d = {
       pg: {
         pharmacie: ph,
         garde: gr,
@@ -297,7 +297,7 @@ export default function GardePharmacie() {
                 onChange={handleChangeGR}
               >
                 {gardes?.map((item) => (
-                  <MenuItem value={item.id}>{item.type}</MenuItem>
+                  <MenuItem key={item.id} value={item.id}>{item.type}</MenuItem>
                 ))}
               </Select>
             </FormControl>

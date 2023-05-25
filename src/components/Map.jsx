@@ -23,9 +23,7 @@ const Map = () => {
     const ifameData = document.getElementById("iframeLocal")
     ifameData.src = `https://maps.google.com/maps?q=${latitude},${longitude}&hl=es;&output=embed`
   }, [latitude, longitude])
-  const handleClick = () => {
 
-  }
   return (
     <Container id="home" className="container">
       <Slide direction="left">

@@ -8,9 +8,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "../service/caller.service.jsx"
-import { Table, Space, Popconfirm } from "antd";
+import { Table, Space, Popconfirm, Select } from "antd";
 import FormControl from "@mui/material/FormControl";
-import { Select } from "antd";
+
 const theme = createTheme();
 
 export default function Garde() {
@@ -18,11 +18,11 @@ export default function Garde() {
   const [loading, setLoad] = useState(false);
   const [gardes, setGardes] = useState([]);
   const [upTB, forceUpdate] = useReducer((x) => x + 1, 0); // reaload tb
-  const [editingKey, setEditingKey] = useState('');
+  const setEditingKey = useState('');
   // ADD
   const onSubmit = async (event) => {
     event.preventDefault();
-    var d = {
+    let d = {
       type: types,
     };
     if (!d.type) {
