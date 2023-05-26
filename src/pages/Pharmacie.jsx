@@ -43,7 +43,7 @@ export default function Pharmacie() {
         console.log("zonevalueuseEffect  ", zonevalue);
     }, [zonevalue]);
 
-    var showPharmacie = {
+    let showPharmacie = {
         nom: '',
         adresse: '',
         latitude: 0,
@@ -51,7 +51,7 @@ export default function Pharmacie() {
         rating: '',
         photos: null,
         zone: null
-        
+
     };
     const [product, setProduct] = useState(showPharmacie);
 
@@ -67,7 +67,7 @@ export default function Pharmacie() {
                     rating: item.rating,
                     photos: item.photos,
                     zone: item.zone.nom,
-                    
+
                 })))
         );
     };
@@ -112,6 +112,9 @@ export default function Pharmacie() {
     };
 
     const editProduct = (product) => {
+        const selectedZoneitem = zones.find((z) => z.nom === product.zone);
+        setSelectedZone(selectedZoneitem);
+
         const newProduct = {
             ...product,
             photos: file,
@@ -265,21 +268,21 @@ export default function Pharmacie() {
                         <label htmlFor="latitude" className="font-bold">
                             latitude
                         </label>
-                        <InputNumber id="latitude" value={product.latitude} onValueChange={(e) => onInputNumberChange(e, 'latitude')}  maxFractionDigits={20} />
+                        <InputNumber id="latitude" value={product.latitude} onValueChange={(e) => onInputNumberChange(e, 'latitude')} maxFractionDigits={20} />
                         {submitted && !product.latitude && <small className="p-error">latitude is required.</small>}
                     </div>
                     <div className="field col">
                         <label htmlFor="longitude" className="font-bold">
                             longitude
                         </label>
-                        <InputNumber id="longitude" value={product.longitude} onValueChange={(e) => onInputNumberChange(e, 'longitude')}   maxFractionDigits={20}/>
+                        <InputNumber id="longitude" value={product.longitude} onValueChange={(e) => onInputNumberChange(e, 'longitude')} maxFractionDigits={20} />
                         {submitted && !product.longitude && <small className="p-error">longitude is required.</small>}
                     </div>
                     <div className="field col">
                         <label htmlFor="rating" className="font-bold">
-                        rating
+                            rating
                         </label>
-                        <InputNumber id="rating" value={product.rating} onValueChange={(e) => onInputNumberChange(e, 'rating')}  maxFractionDigits={1}/>
+                        <InputNumber id="rating" value={product.rating} onValueChange={(e) => onInputNumberChange(e, 'rating')} maxFractionDigits={1} />
                         {submitted && !product.rating && <small className="p-error">rating is required.</small>}
                     </div>
                 </div>

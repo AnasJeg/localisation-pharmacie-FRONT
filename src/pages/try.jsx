@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
@@ -9,7 +8,6 @@ import { Toolbar } from 'primereact/toolbar';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
-import { zoneServices } from '../service/zone.service';
 import { DatePicker } from 'antd';
 import dayjs from "dayjs";
 import '../style/test.css'
@@ -17,7 +15,7 @@ import { GardePharmacieService } from '../service/gardepharmacie.service';
 import { pharmacieService } from '../service/pharmacie.service';
 import { gardeServices } from '../service/garde.service';
 
-export default function Test() {
+export default function Try() {
     const [zones, setZones] = useState(null);
     const [productDialog, setProductDialog] = useState(false);
     const [deleteProductDialog, setDeleteProductDialog] = useState(false);
@@ -71,7 +69,7 @@ export default function Test() {
     }, [gardes]);
 
 
-    var showGardePharmacie = {
+    let showGardePharmacie = {
         pg: {
             dateDebut: '',
             pharmacie: '',
@@ -135,7 +133,13 @@ export default function Test() {
         })
     };
 
+
     const editProduct = (product) => {
+        setProductDialog(true);
+        const selectedPharmacietem = pharmacies.find((phm) => phm.nom === product.pharmacie);
+        const selectedGardetem = gardes.find((grd) => grd.type === product.garde);
+        setSelectedPharmacie(selectedPharmacietem);
+        setSelectedGarde(selectedGardetem);
         const newProduct = {
             pg: {
                 dateDebut: dateD,
@@ -144,18 +148,16 @@ export default function Test() {
             },
             dateFin: dateF
         };
-        setProduct(newProduct);
-        console.log('Edit product', newProduct)
-        setProductDialog(true);
-        GardePharmacieService.UpdateGardePharmacie(product.dateDebut, product.pharmacie,product.garde,
+        GardePharmacieService.UpdateGardePharmacie(product.dateDebut, product.pharmacie, product.garde,
             newProduct
-            )
+        )
             .then(() => {
                 setDeleteProductDialog(false);
-                setProduct(showGardePharmacie);
                 toast.current.show({ severity: 'success', summary: 'Successful', detail: 'operation done', life: 3000 });
                 fetchGardePharmacie();
             })
+
+
     };
 
     const confirmDeleteProduct = (product) => {

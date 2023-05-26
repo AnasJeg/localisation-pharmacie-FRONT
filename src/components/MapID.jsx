@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Slide } from "react-awesome-reveal";
 import { Rating } from "primereact/rating";
 
-const Map = () => {
+const MapID = () => {
   const [longitude, setLongitude] = useState()
   const [latitude, setLatitude] = useState()
   const { id } = useParams();
@@ -53,7 +53,7 @@ const Map = () => {
   );
 };
 
-export default Map;
+export default MapID;
 
 const Container = styled.div`
   display: flex;

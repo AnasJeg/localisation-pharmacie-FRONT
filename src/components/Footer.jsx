@@ -1,7 +1,6 @@
 import React from "react";
 import { RiFacebookCircleFill } from "react-icons/ri";
-import { AiFillTwitterCircle } from 'react-icons/ai';
-import { AiOutlineMail } from 'react-icons/ai';
+import { AiFillTwitterCircle, AiOutlineMail } from 'react-icons/ai';
 import "../style/footer.css"
 
 export default function Footer() {

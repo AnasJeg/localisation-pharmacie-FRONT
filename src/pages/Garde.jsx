@@ -3,7 +3,7 @@ import PublicIcon from "@mui/icons-material/Public";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import TimelapseIcon from '@mui/icons-material/Timelapse';
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -71,14 +71,14 @@ export default function Garde() {
   }
   const column = [
     {
+      key: "1",
       title: "Id",
       dataIndex: "id",
-      key: "id",
     },
     {
+      key: "2",
       title: "Type",
       dataIndex: "type",
-      key: "type",
     },
     {
       title: "Action",
@@ -104,15 +104,14 @@ export default function Garde() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 2,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <PublicIcon sx={{ m: 3 }}>
-            <LockOutlinedIcon />
-          </PublicIcon>
+          <TimelapseIcon sx={{ m: 3 }}>
+          </TimelapseIcon>
           <Typography component="h1" variant="h5">
             Ajouter garde
           </Typography>
@@ -133,10 +132,12 @@ export default function Garde() {
                 }
                 options={[
                   {
+                    key: '1',
                     value: "jour",
                     label: "jour",
                   },
                   {
+                    key:'2',
                     value: "nuit",
                     label: "nuit",
                   },
@@ -158,6 +159,7 @@ export default function Garde() {
         </Box>
       </Container>
           <Table 
+          style={{marginTop: '5px'}}
                 bordered  columns={column} dataSource={gardes} loading={loading}
                  pagination={{
                     onChange: cancel,

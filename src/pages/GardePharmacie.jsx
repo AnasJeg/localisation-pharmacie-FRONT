@@ -6,14 +6,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Table, Space, Popconfirm, DatePicker } from "antd";
+import { Table, Space, Popconfirm, DatePicker, Select, Modal, Form } from "antd";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import { Select } from "antd";
 import axios from "../service/caller.service.jsx"
 import { Button } from "@mui/material";
 import dayjs from "dayjs";
-import { Modal, Form } from "antd";
 
 const theme = createTheme();
 
@@ -30,7 +28,6 @@ export default function GardePharmacie() {
   //modal
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [setModalText] = useState("Content of the modal");
   const [form] = Form.useForm();
   const [modalepharmacie, setPH_modal] = useState("");
   const [modalegarde, setG_modal] = useState("");
@@ -243,19 +240,6 @@ export default function GardePharmacie() {
   useEffect(() => {
     console.log("Selectedpharma_Garde after update: ", selectedGarde_Ph);
   }, [selectedGarde_Ph]);
-  /*
-   useEffect(() => {
-     if (selectedGarde_Ph?.dateDebut && selectedGarde_Ph?.dateFin) {
-       form.setFieldsValue({
-         dates: [moment(selectedGarde_Ph.dateDebut), moment(selectedGarde_Ph.dateFin)],
-         gardeForm: selectedGarde_Ph.garde,
-         phramacieFrom: selectedGarde_Ph.pharmacie
-       });
-       console.log(selectedGarde_Ph.dateDebut);
-       console.log(selectedGarde_Ph.dateFin);
-     }
-   }, [selectedGarde_Ph, form]);
- */
 
   useEffect(() => {
     form.setFieldsValue({
@@ -290,8 +274,7 @@ export default function GardePharmacie() {
             </Space>
             <FormControl fullWidth style={{ marginTop: 14 }}>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                id="gardes"
                 value={gr}
                 label="gardes"
                 onChange={handleChangeGR}
@@ -303,14 +286,14 @@ export default function GardePharmacie() {
             </FormControl>
             <FormControl fullWidth style={{ marginTop: 14 }}>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+               
+                id="pharmacies"
                 value={ph}
                 label="pharmacies"
                 onChange={handleChangePH}
               >
                 {pharmacies?.map((item) => (
-                  <MenuItem value={item.id}>{item.nom}</MenuItem>
+                  <MenuItem key={item.id} value={item.id}>{item.nom}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -363,8 +346,6 @@ export default function GardePharmacie() {
           </Form.Item>
           <Form.Item label="Garde" name="gardeForm">
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
               value={gr}
               label="Garde : "
               fullWidth
@@ -372,14 +353,12 @@ export default function GardePharmacie() {
               style={{ height: 14 }}
             >
               {gardes?.map((item) => (
-                <MenuItem value={item.id}>{item.type}</MenuItem>
+                <MenuItem key={item.id} value={item.id}>{item.type}</MenuItem>
               ))}
             </Select>
           </Form.Item>
           <Form.Item label="Pharmacie" name="phramacieFrom">
             <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
               value={ph}
               label="pharmacies"
               fullWidth
@@ -387,7 +366,7 @@ export default function GardePharmacie() {
               style={{ height: 14 }}
             >
               {pharmacies?.map((item) => (
-                <MenuItem value={item.id}>{item.nom}</MenuItem>
+                <MenuItem key={item.id} value={item.id}>{item.nom}</MenuItem>
               ))}
             </Select>
           </Form.Item>

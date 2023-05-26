@@ -12,6 +12,10 @@ let DeleteVille = (id) =>{
     return Axios.delete(`/api/controller/villes/delete/${id}`)
 }
 
+let findByNom = (nom) =>{
+    return Axios.delete(`/api/controller/villes?nom=${nom}`)
+}
+
 export const villeServices = {
-    getVilles,addVille,DeleteVille
+    getVilles,addVille,DeleteVille,findByNom
 }

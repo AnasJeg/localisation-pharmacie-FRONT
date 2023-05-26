@@ -22,7 +22,7 @@ export default function Zone() {
     const dt = useRef(null);
     const [villes, setVilles] = useState("");
     const [selectedVille, setSelectedVille] = useState(null);
-    const [id, setId] = useState('')
+    const [id, setId] = useState('');
 
 
     useEffect(() => {
@@ -40,7 +40,7 @@ export default function Zone() {
         console.log("zonevalueuseEffect  ", villes);
     }, [villes]);
 
-    var showVille = {
+    let showVille = {
         nom: '',
         ville: null
     };
@@ -98,12 +98,12 @@ export default function Zone() {
         }
     };
 
+    
     const editProduct = (product) => {
-        const newProduct = {
-            ...product
-        };
+        const newProduct = { ...product };
+        const selectedVilleItem = villes.find((ville) => ville.nom === product.ville);
+        setSelectedVille(selectedVilleItem); 
         setProduct(newProduct);
-        console.log(product)
         setProductDialog(true);
     };
 
@@ -179,8 +179,6 @@ export default function Zone() {
             <Button label="Yes" icon="pi pi-check" severity="danger" onClick={deleteProduct} />
         </React.Fragment>
     );
-
-
 
     return (
         <div>
