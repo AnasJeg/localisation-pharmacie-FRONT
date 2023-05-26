@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState } from "react";
-import PublicIcon from "@mui/icons-material/Public";
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -256,20 +256,20 @@ export default function GardePharmacie() {
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 3,
+            marginTop: 2,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}
         >
-          <PublicIcon sx={{ m: 3 }}>
+          <PendingActionsIcon sx={{ m: 3 }}>
             <LockOutlinedIcon />
-          </PublicIcon>
+          </PendingActionsIcon>
           <Typography component="h1" variant="h5">
             Ajouter Garde Pharmacie
           </Typography>
           <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
-            <Space direction="vertical" size={12}>
+            <Space direction="vertical"  size={12}>
               <RangePicker presets={rangePresets} onChange={onRangeChange} />
             </Space>
             <FormControl fullWidth style={{ marginTop: 14 }}>

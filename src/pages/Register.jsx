@@ -1,13 +1,11 @@
-import * as React from 'react';
+import React, { useRef,useState } from 'react';
 import { Button } from 'primereact/button';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Link, useNavigate } from 'react-router-dom';
 import { classNames } from 'primereact/utils';
 import { Password } from 'primereact/password';
 import { InputText } from 'primereact/inputtext';
-import { useState } from 'react';
 import { Toast } from 'primereact/toast';
-import { useRef } from 'react';
 import { accountService } from '../service/account.service';
 
 const Register = () => {
@@ -29,7 +27,7 @@ const Register = () => {
       role: 'USER'
     }
     if (!prenom || !nom || !email || !password || !password2) {
-      alert("Champ vide !");
+      toast.current.show({ severity: 'error', summary: 'Error', detail: 'Champ vide  !', life: 2000 });
     } else if (password !== password2)
       toast.current.show({ severity: 'error', summary: 'Error', detail: 'pass diff !', life: 3000 });
     else {

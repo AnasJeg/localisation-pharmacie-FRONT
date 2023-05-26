@@ -168,7 +168,7 @@ const Home = () => {
           <img src={`${data.photos}`} alt={data.nom} className="my-4 md:my-0 w-9 md:w-10rem shadow-2 mr-5" />
           <div className="flex-1 flex flex-column align-items-center text-center md:text-left">
             <div className="font-bold text-2xl">{data.nom}</div>
-            <div className="mb-2">{data.adresse}</div>
+            <div className="mb-2">{data.zone.ville.nom}</div>
             <Rating value={data.rating} readOnly cancel={false} className="mb-2"></Rating>
           </div>
           <div className="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
@@ -186,11 +186,11 @@ const Home = () => {
           <div className="flex flex-column align-items-center text-center mb-3">
             <img src={`${data.photos}`} alt={data.nom} className="w-9 shadow-2 my-3 mx-0" />
             <div className="text-2xl font-bold">{data.nom}</div>
-            <div className="mb-3">{data.adresse}</div>
+            <div className="mb-3">{data.zone.ville.nom}</div>
             <Rating value={data.rating} readOnly cancel={false} />
           </div>
-          <div className="flex align-items-center justify-content-between">
-            <Button icon="pi pi-map-marker" onClick={() => go(`${data.id}`)} />
+          <div className="justify-content-between">
+            <Button icon="pi pi-map-marker"  className="mb-2 p-button-sm"  onClick={() => go(`${data.id}`)} />
           </div>
         </div>
       </div>

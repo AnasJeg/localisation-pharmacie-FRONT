@@ -26,7 +26,7 @@ export default function Pharmacie() {
     const dt = useRef(null);
     const [file, setFile] = useState("");
     const [selectedZone, setSelectedZone] = useState(null);
-    const [zonevalue, setZonevalue] = useState(null)
+    const zonevalue = useState(null)
     const [id, setId] = useState('')
 
     useEffect(() => {

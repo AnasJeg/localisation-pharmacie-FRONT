@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer, useState } from "react";
-import PublicIcon from "@mui/icons-material/Public";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
