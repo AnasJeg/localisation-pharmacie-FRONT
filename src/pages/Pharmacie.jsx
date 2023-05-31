@@ -28,6 +28,7 @@ export default function Pharmacie() {
     const [selectedZone, setSelectedZone] = useState(null);
     const zonevalue = useState(null)
     const [id, setId] = useState('')
+    const [editingFile, setEditingFile] = useState(false);
 
     useEffect(() => {
         zoneServices.getZones().then((res) =>
@@ -49,7 +50,7 @@ export default function Pharmacie() {
         latitude: 0,
         longitude: 0,
         rating: '',
-        photos: null,
+        photos: [],
         zone: null
 
     };
@@ -94,36 +95,80 @@ export default function Pharmacie() {
 
 
 
-    const saveProduct = () => {
-        setSubmitted(true);
-        if (product.nom.trim()) {
-            const newProduct = {
-                ...product,
-                photos: file,
-                zone: selectedZone
-            };
-            console.log("save_pharmacie", newProduct);
-            setProductDialog(false);
-            setProduct(newProduct);
-            pharmacieService.addPharmacie(newProduct).then(() => {
-                fetchPharmacies();
-            })
-        }
-    };
-
     const editProduct = (product) => {
         const selectedZoneitem = zones.find((z) => z.nom === product.zone);
         setSelectedZone(selectedZoneitem);
-
-        const newProduct = {
-            ...product,
-            photos: file,
-            zone: selectedZone
-        };
-        setProduct(newProduct);
-        console.log(product)
+        setProduct(product);
+        setFile(product.photos);
+        setEditingFile(false);
         setProductDialog(true);
     };
+
+    const saveProduct = () => {
+        setSubmitted(true);
+
+        try {
+            if (
+                product.nom.trim() &&
+                product.adresse.trim() &&
+                product.latitude &&
+                product.longitude &&
+                product.rating &&
+                selectedZone &&
+                product.photos != null && // Check if photos is not null, undefined, or empty string
+                product.photos !== ""
+            ) {
+                const newProduct = {
+                    ...product,
+                    zone: selectedZone,
+                    photos: editingFile ? file : product.photos,
+                };
+
+                setProductDialog(false);
+                setProduct(newProduct);
+
+                pharmacieService.addPharmacie(newProduct).then(() => {
+                    fetchPharmacies();
+                }).catch(error => {
+                    if (error.response && error.response.status === 403) {
+                        toast.current.show({
+                            severity: "error",
+                            summary: "Error",
+                            detail: "Error with server or check upload image !",
+                            life: 3000,
+                        });
+                        console.log("Request failed with status code 403 - Forbidden");
+                    } else {
+                        toast.current.show({
+                            severity: "error",
+                            summary: "Error",
+                            detail: "Error with server or invalid field",
+                            life: 3000,
+                        });
+                        console.log("Error:", error);
+                    }
+                });
+            } else {
+                toast.current.show({
+                    severity: "warn",
+                    summary: "Warning",
+                    detail: "Please fill in all the required fields",
+                    life: 3000,
+                });
+            }
+        } catch (error) {
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Error with server or invalid field",
+                life: 3000,
+            });
+            console.log("Error:", error);
+        }
+    };
+
+
+
 
     const confirmDeleteProduct = (product) => {
         setId(product.id);
@@ -222,7 +267,7 @@ export default function Pharmacie() {
         reader.onloadend = function () {
             const base64data = reader.result;
             setFile(base64data);
-            console.log(base64data)
+            setEditingFile(true);
         };
     };
 
@@ -295,6 +340,7 @@ export default function Pharmacie() {
                         Photo (Please choose your image then click on upload)
                     </label>
                     <FileUpload name="photos" url={'/api/upload'} multiple accept="image/*" customUpload uploadHandler={photosUpload} maxFileSize={1000000} emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
+                    {submitted && product.photos.length === 0 && <small className="p-error">photo is required.</small>}
                 </div>
             </Dialog>
 
