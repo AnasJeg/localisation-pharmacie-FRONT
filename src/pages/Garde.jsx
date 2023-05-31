@@ -112,7 +112,7 @@ export default function Garde() {
           <TimelapseIcon sx={{ m: 3 }}>
           </TimelapseIcon>
           <Typography component="h1" variant="h5">
-            Ajouter garde
+          Espace garde (jour ou nuit)
           </Typography>
           <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
             <FormControl style={{ marginTop: 17 }}>
@@ -147,6 +147,7 @@ export default function Garde() {
             <Button
               type="submit"
               style={{
+                backgroundColor: 'green',
                 width: 260,
               }}
               variant="contained"

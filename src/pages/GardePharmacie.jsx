@@ -266,7 +266,7 @@ export default function GardePharmacie() {
             <LockOutlinedIcon />
           </PendingActionsIcon>
           <Typography component="h1" variant="h5">
-            Ajouter Garde Pharmacie
+            Espace Garde Pharmacie
           </Typography>
           <Box component="form" onSubmit={onSubmit} noValidate sx={{ mt: 1 }}>
             <Space direction="vertical"  size={12}>
@@ -299,6 +299,9 @@ export default function GardePharmacie() {
             </FormControl>
             <Button
               type="submit"
+              style={{
+                backgroundColor: 'green'
+              }}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
