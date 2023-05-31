@@ -292,7 +292,7 @@ export default function Pharmacie() {
                 </div>
                 <div className="card" style={{ marginTop: '1rem' }}>
                     <label htmlFor="photo" className="font-bold">
-                        Photo
+                        Photo (Please upload your image then click on choose)
                     </label>
                     <FileUpload name="photos" url={'/api/upload'} multiple accept="image/*" customUpload uploadHandler={photosUpload} maxFileSize={1000000} emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
                 </div>

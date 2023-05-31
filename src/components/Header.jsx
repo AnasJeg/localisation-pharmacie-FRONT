@@ -65,11 +65,6 @@ export default function Header() {
       ]
 
     },
-    {
-      label: 'Test',
-      icon: 'pi pi-cog',
-      command: () => { navigate('/app/Test') }
-    },
   ];
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 

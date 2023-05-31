@@ -6,7 +6,6 @@ import Pharmacie from '../pages/Pharmacie';
 import Zone from '../pages/Zone';
 import Garde from '../pages/Garde';
 import GardePharmacie from '../pages/GardePharmacie';
-import Localisation from '../components/Localisation';
 import MapID from '../components/MapID';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -41,7 +40,6 @@ const AdminRoute = () => {
                             <Route path='try' element={<Try/>} />
                         </>
                     )}
-                    <Route path="Localisation/:id" element={<Localisation />} />
                     <Route path="Local/:id" element={<MapID />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Route>
